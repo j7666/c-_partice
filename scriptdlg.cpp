@@ -20,4 +20,6 @@ scriptDlg::scriptDlg(QWidget *parent) :
 
         layout2->addLayout(layout1,1,1);
 
+        //connect(okBtn,SIGNAL(clicked()),this,SLOT(on_Script()))
+
     }

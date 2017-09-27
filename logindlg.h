@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QString>
 
+
 class loginDlg : public QDialog
     {
         Q_OBJECT

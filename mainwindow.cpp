@@ -9,7 +9,7 @@
 #include <QStandardItemModel>
 #include <QTableView>
 #include "scriptdlg.h"
-
+#include "mymysql.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -131,8 +131,15 @@ void MainWindow::on_login()
         dlg.exec();
         if(dlg.isLogin)
             {
-                QString str = QString("%1%2%3%4").arg(dlg.userid).arg(dlg.passwd).arg(dlg.dbname).arg(dlg.hostip);
-                QMessageBox::information(this,"",str);
+                mymysql db;
+                int ret = db.sql_connect(dlg.hostip.toStdString().data(),dlg.userid.toStdString().data(),dlg.passwd.toStdString().data(),dlg.dbname.toStdString().data());
+                if(ret == -1)
+                    QMessageBox::information(this,"login failed",db.getError());
+                else
+                    QMessageBox::information(this,"","login success");
+
+                //QString str = QString("%1%2%3%4").arg(dlg.userid).arg(dlg.passwd).arg(dlg.dbname).arg(dlg.hostip);
+                //QMessageBox::information(this,"",str);
             }
     }
 
@@ -172,6 +179,7 @@ void MainWindow::showview()
 {
         QStandardItemModel *model = new QStandardItemModel(5,3);
         QTableView *view1 = new QTableView;
+        view1->setAttribute(Qt::WA_DeleteOnClose);
         view1->setModel(model);
         view1->setWindowTitle("view");
         view1->setStyleSheet("border-image:url(3.jpg);");
