@@ -22,6 +22,45 @@ int mymysql::sql_connect(const char *Hostname, const char *User, const char *Pas
     }
 }
 
+void mymysql::sql_disconnect()
+{
+    if(connection)
+        mysql_close(connection);
+    connection = NULL;
+}
+
+int mymysql::sql_exec(const char *SQL)
+{
+    if(0 != mysql_query(connection,SQL))
+    {
+        memset(buf,0,sizeof(buf));
+        strcpy(buf,mysql_error(&mysql));
+        return -1;
+    }
+    return 0;
+}
+
+int mymysql::sql_open(const char *SQL)
+{
+    if(0 != mysql_query(connection,SQL))
+    {
+        memset(buf,0,sizeof(buf));
+        strcpy(buf,mysql_error(&mysql));
+        return -1;
+    }
+    MYSQL_RES *result = mysql_store_result(connection);
+    if(result == NULL)
+        return -1;
+    MYSQL_FIELD *field;
+    while(1)
+    {
+       field =  mysql_fetch_field(result);
+       if(field == NULL)
+        break;
+       QMessageBox::information(0,"",field->name);
+    }
+}
+
 const char *mymysql::getError()
 {
     return buf;

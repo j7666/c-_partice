@@ -5,6 +5,7 @@
 scriptDlg::scriptDlg(QWidget *parent) :
     QDialog(parent)
     {
+        isLogin = false;
         label0 = new QLabel("SQL");
         okBtn = new QPushButton("Exe");
         cancelBtn = new QPushButton("Cancel");
@@ -21,5 +22,20 @@ scriptDlg::scriptDlg(QWidget *parent) :
         layout2->addLayout(layout1,1,1);
 
         //connect(okBtn,SIGNAL(clicked()),this,SLOT(on_Script()))
+        connect(okBtn,SIGNAL(clicked()),this,SLOT(onOkbtnClicked()));
+        connect(cancelBtn,SIGNAL(clicked()),this,SLOT(onCancelbtnClicked()));
 
-    }
+
+}
+
+void scriptDlg::onOkbtnClicked()
+{
+    SQL = scriptEditSql->toPlainText();
+    isLogin = true;
+    close();
+}
+
+void scriptDlg::onCancelbtnClicked()
+{
+    close();
+}

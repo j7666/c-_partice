@@ -6,7 +6,7 @@
 #include <QAction>
 #include <QCloseEvent>
 #include <QMdiArea>
-
+#include "mymysql.h"
 
 class MainWindow : public QMainWindow
     {
@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow
         ~MainWindow();
 
         void closeEvent(QCloseEvent *event);
-
+        void script_msg(const char *SQL);
 
 
     private:
@@ -45,6 +45,7 @@ class MainWindow : public QMainWindow
 
         QMdiArea *mdiArea;
 
+        mymysql db;
 
     private slots:
 
