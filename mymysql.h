@@ -3,6 +3,8 @@
 
 #include "mysql.h"
 #include <windows.h>
+#include <QStandardItemModel>
+
 class mymysql
 {
 public:
@@ -11,7 +13,7 @@ public:
     void sql_disconnect();
 
     int sql_exec(const char *SQL);
-    int sql_open(const char *SQL);
+    int sql_open(const char *SQL, QStandardItemModel **p);
     const char *getError();
 private:
 

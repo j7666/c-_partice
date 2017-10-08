@@ -24,3 +24,8 @@ HEADERS  += mainwindow.h \
     logindlg.h \
     scriptdlg.h \
     mymysql.h
+
+OTHER_FILES +=
+
+RESOURCES += \
+    cdma.qrc

@@ -7,6 +7,7 @@
 #include <QCloseEvent>
 #include <QMdiArea>
 #include "mymysql.h"
+#include <QStandardItemModel>
 
 class MainWindow : public QMainWindow
     {
@@ -46,6 +47,8 @@ class MainWindow : public QMainWindow
         QMdiArea *mdiArea;
 
         mymysql db;
+        //QStandardItemModel **p;
+
 
     private slots:
 

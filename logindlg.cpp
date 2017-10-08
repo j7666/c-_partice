@@ -51,7 +51,7 @@ loginDlg::loginDlg(QWidget *parent) :
         setAutoFillBackground(true);
 
         QPalette palette;
-        palette.setBrush(QPalette::Background,QBrush(QPixmap("2.jpg")));
+        palette.setBrush(QPalette::Background,QBrush(QPixmap(":/png/2.jpg")));
         setPalette(palette);
 
         connect(loginBtn,SIGNAL(clicked()),this,SLOT(loginBtnClicked()));

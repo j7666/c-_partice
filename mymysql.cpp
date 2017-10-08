@@ -1,6 +1,8 @@
 #include "mymysql.h"
 #include <QMessageBox>
 #include "string.h"
+
+
 mymysql::mymysql()
 {
     mysql_init(&mysql);
@@ -40,7 +42,7 @@ int mymysql::sql_exec(const char *SQL)
     return 0;
 }
 
-int mymysql::sql_open(const char *SQL)
+int mymysql::sql_open(const char *SQL , QStandardItemModel **p)
 {
     if(0 != mysql_query(connection,SQL))
     {
@@ -48,17 +50,43 @@ int mymysql::sql_open(const char *SQL)
         strcpy(buf,mysql_error(&mysql));
         return -1;
     }
+
     MYSQL_RES *result = mysql_store_result(connection);
     if(result == NULL)
         return -1;
+
+    int rowcount = 0 ;
+    rowcount =  mysql_affected_rows(connection); //行数，记录数量。要放在fetch_filed后，
+
+    int fieldcount = 0;
+    fieldcount = mysql_field_count(connection);  //字段数量
+
+    *p = new QStandardItemModel(rowcount , fieldcount);
+
     MYSQL_FIELD *field;
-    while(1)
+
+
+
+    int i =0;
+    int j = 0;
+    for(i = 0; i<fieldcount; i++)
     {
-       field =  mysql_fetch_field(result);
-       if(field == NULL)
-        break;
-       QMessageBox::information(0,"",field->name);
+        field =  mysql_fetch_field(result);
+        (*p)->setHeaderData(i,Qt::Horizontal,field->name);
     }
+
+    MYSQL_ROW row  = NULL;
+    for(i = 0; i<rowcount; i++)
+    {
+        row = mysql_fetch_row(result);
+        for(j = 0; j < fieldcount; j++)
+        {
+            (*p)->setData((*p)->index(i,j,QModelIndex()),QString(row[j]));
+        }
+    }
+
+
+
 }
 
 const char *mymysql::getError()

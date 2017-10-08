@@ -26,12 +26,12 @@ MainWindow::MainWindow(QWidget *parent)
         mdiArea->setPalette(palette);*/  //mei you zuo yong
 
     mdiArea->setBackground(Qt::NoBrush);
-    mdiArea->setStyleSheet("background-image: url(1.jpg);");
-    // mdiArea->setStyleSheet("border-image:url(1.jpg);");
+    mdiArea->setStyleSheet("background-image: url(:/png/1.jpg);");
+    // mdiArea->setStyleSheet("border-image:url(:/png/1.jpg);");
 
     setCentralWidget(mdiArea);
 
-    setWindowIcon(QIcon("main.png"));
+    setWindowIcon(QIcon(":/png/main.png"));
     CreatActions();
     CreatMenus();
 
@@ -101,7 +101,7 @@ void MainWindow::showSub()
     QWidget *wgt = new QWidget;
     wgt->setAttribute(Qt::WA_DeleteOnClose);
     wgt->setWindowTitle("subwgt");
-    wgt->setStyleSheet("border-image:url(3.jpg);");
+    wgt->setStyleSheet("border-image:url(:/png/3.jpg);");
     mdiArea->addSubWindow(wgt);
     wgt->show();
 
@@ -179,9 +179,23 @@ void MainWindow::on_script()
 void MainWindow::script_msg(const char *SQL)
 {
     bool ret = 0;
+    QStandardItemModel *model = NULL;
+
     if( (strncmp(SQL,"select",6) == 0) || (strncmp(SQL,"SELECT",6) == 0) )
     {
-        ret = db.sql_open(SQL);
+        ret = db.sql_open(SQL , &model);
+        //QStandardItemModel *model = new QStandardItemModel(5,3);
+        QTableView *view1 = new QTableView;
+        view1->setAttribute(Qt::WA_DeleteOnClose);
+        view1->setModel(model);
+
+        view1->setWindowTitle("view");
+        view1->setStyleSheet("border-image:url(:/png/3.jpg);");
+        mdiArea->addSubWindow(view1);
+        view1->show();
+        //mdiArea->currentSubWindow()->resize(width()-100,height()-100);
+        mdiArea->activeSubWindow()->resize(width()-100,height()-100);
+
     }else
     {
         ret = db.sql_exec(SQL);
@@ -191,6 +205,8 @@ void MainWindow::script_msg(const char *SQL)
         QMessageBox::information(this,"","script sucess");
     else
         QMessageBox::information(this,"script failed",db.getError());
+
+
 
 
 }
@@ -211,24 +227,25 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::showview()
 {
-    QStandardItemModel *model = new QStandardItemModel(5,3);
+    //QStandardItemModel *model = new QStandardItemModel(5,3);
     QTableView *view1 = new QTableView;
     view1->setAttribute(Qt::WA_DeleteOnClose);
-    view1->setModel(model);
+    //view1->setModel(model);
+    //view1->setModel((*p));
     view1->setWindowTitle("view");
     view1->setStyleSheet("border-image:url(3.jpg);");
     mdiArea->addSubWindow(view1);
     view1->show();
     //mdiArea->currentSubWindow()->resize(width()-100,height()-100);
     mdiArea->activeSubWindow()->resize(width()-100,height()-100);
-    model->setHeaderData(0,Qt::Horizontal,tr("Name"));
+    /*model->setHeaderData(0,Qt::Horizontal,tr("Name"));
     model->setHeaderData(1,Qt::Horizontal,tr("sex"));
     model->setHeaderData(2,Qt::Horizontal,tr("age"));
     model->setHeaderData(0,Qt::Vertical,tr("001"));
     model->setHeaderData(1,Qt::Vertical,tr("002"));
     model->setHeaderData(2,Qt::Vertical,tr("003"));
 
-    model->setData(model->index(0,0),"007");
+    model->setData(model->index(0,0),"007");*/
 
 }
 
