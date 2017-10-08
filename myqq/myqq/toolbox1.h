@@ -2,6 +2,10 @@
 #define TOOLBOX1_H
 
 #include <QToolBox>
+#include <QToolButton>
+#include "widget.h"
+
+#define CLIENTCOUNT 256 //最大客户端数量
 
 class toolbox1 : public QToolBox
 {
@@ -12,6 +16,10 @@ public:
 signals:
     
 public slots:
+
+private:
+    QToolButton *toolBtn[CLIENTCOUNT];
+    Widget *child[CLIENTCOUNT];
     
 };
 
