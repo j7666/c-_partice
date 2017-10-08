@@ -13,6 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        widget.cpp
+        widget.cpp \
+    toolbox1.cpp
 
-HEADERS  += widget.h
+HEADERS  += widget.h \
+    toolbox1.h
+
+RESOURCES += \
+    myqq.qrc
