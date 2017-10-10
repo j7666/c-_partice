@@ -5,22 +5,27 @@
 #include <QToolButton>
 #include "widget.h"
 
-#define CLIENTCOUNT 256 //最大客户端数量
+#define CLIENTCOUNT 256
 
 class toolbox1 : public QToolBox
 {
     Q_OBJECT
 public:
     explicit toolbox1(QWidget *parent = 0);
-    
+
 signals:
-    
+
 public slots:
 
+        bool eventFilter(QObject *watched, QEvent *event);
+
 private:
+        QString username[CLIENTCOUNT];
     QToolButton *toolBtn[CLIENTCOUNT];
     Widget *child[CLIENTCOUNT];
-    
+    void init_toolBtn();
+    void init_username();
+
 };
 
 #endif // TOOLBOX1_H
