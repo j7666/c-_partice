@@ -5,6 +5,9 @@
 
 #include <QBoxLayout>
 #include <QEvent>
+#include "logindlg.h"
+#include <QMessageBox>
+#include <QHostAddress>
 
 toolbox1::toolbox1(QWidget *parent) :
     QToolBox(parent)
@@ -12,6 +15,36 @@ toolbox1::toolbox1(QWidget *parent) :
         init_username();
         init_toolBtn();
         setWindowIcon(QIcon(":/images/3.png"));
+
+        loginDlg login;
+        login.exec();
+
+        if(login.isLogin)
+            {
+                if(login.userid <0 || login.userid >255)
+                    QMessageBox::information(this,"","ERROR");
+                else
+                    {
+                        setWindowTitle(username[login.userid]);
+                        userid = login.userid;
+                        passwd = login.passwd;
+                        hostip = login.hostip;
+                        hostport = login.hostport;
+
+                        socketClient = new QTcpSocket(this);
+                        connect(socketClient,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(sock_Error(QAbstractSocket::SocketAccessError)) );
+                        connect(socketClient,SIGNAL(readyRead()),this,SLOT(read_Msg()) );
+                        connect(socketClient,SIGNAL(connected()),this,SLOT(socket_connected()));
+
+                        QHostAddress hostAddr(hostip);
+                        socketClient->connectToHost(hostAddr,hostport );
+
+                    }
+            }
+        else
+            {
+                exit(0);
+            }
 
     }
 
@@ -81,5 +114,26 @@ void toolbox1::init_username()
     {
         for(int i= 0; i < CLIENTCOUNT; i++)
             username[i] = tr("user") + QString::number(i);
+
+    }
+
+void toolbox1::sock_Error(QAbstractSocket::SocketError sockErr)
+    {
+        switch (sockErr) {
+            case QAbstractSocket::RemoteHostClosedError:
+
+                break;
+            default:
+                QMessageBox::information(this,"Error",socketClient->errorString());
+            }
+    }
+
+void toolbox1::read_Msg()
+    {
+
+    }
+
+void toolbox1::socket_connected()
+    {
 
     }
