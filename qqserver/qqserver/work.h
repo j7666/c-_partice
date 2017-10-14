@@ -16,8 +16,14 @@ class work
     public:
         work(int port);
         ~work();
+        void run();
+
 
     private:
+        int setnonblocking(int st );
+        int socket_accept();
+        int socket_receive(int st);
+        void user_logout(int st);
         int listen_st;
         int socket_client[CLIENTCOUNT];
 

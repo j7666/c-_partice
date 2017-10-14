@@ -5,6 +5,7 @@
 #include <string.h>
 #include <errno.h>
 #include "pub.h"
+#include "work.h"
 
 using namespace std;
 
@@ -23,12 +24,14 @@ int main(int argc, char *argv[])
                 return -1;
             }
 
-        setdaemon(); //将程序设置为demon状态。
+        //setdaemon(); //将程序设置为demon状态。
+
+        work w(iport);
         printf("qqserverd begin\n");
-        while(1)
-            {
-                sleep(1);
-            }
+
+        signal1(SIGINT,catch_Signal );
+        signal1(SIGPIPE,catch_Signal );
+        w.run();
 
         return 0;
     }

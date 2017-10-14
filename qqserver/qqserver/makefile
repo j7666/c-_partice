@@ -4,7 +4,8 @@ CC=g++
 
 
 SRCS=main.cpp\
-	pub.cpp
+	pub.cpp\
+	work.cpp
 
 OBJS=$(SRCS:.cpp=.o)
 EXEC=qqserverd

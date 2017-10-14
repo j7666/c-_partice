@@ -7,9 +7,19 @@
 #include "unistd.h"
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
+
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 
 void setdaemon();
+
+int signal1(int signo, void (*func)(int));
+
+void catch_Signal(int Sign);
+
+int socket_creat(int port);
 
 
 

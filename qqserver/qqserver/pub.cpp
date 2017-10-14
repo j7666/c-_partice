@@ -23,3 +23,32 @@ void setdaemon()
             }
 
     }
+
+int signal1(int signo, void (*func)(int))
+    {
+        struct sigaction act,oact;
+        act.sa_handler = func;
+        sigemptyset(&act.sa_mask);
+        act.sa_flags = 0;
+        return sigaction(signo,&act,&oact);
+    }
+
+
+
+void catch_Signal(int Sign)
+    {
+        switch (Sign) {
+            case SIGINT:
+                break;
+            case SIGPIPE:
+                break;
+            default:
+                break;
+            }
+    }
+
+int socket_creat(int port)
+    {
+
+
+    }
