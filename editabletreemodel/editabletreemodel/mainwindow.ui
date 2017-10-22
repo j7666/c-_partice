@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QTreeView" name="treeView">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>311</width>
+      <height>231</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>400</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuAction">
+    <property name="title">
+     <string>Action</string>
+    </property>
+    <addaction name="actionInsert_Row"/>
+    <addaction name="actionInsert_Colunm"/>
+    <addaction name="separator"/>
+    <addaction name="actionRemove_Row"/>
+    <addaction name="actionRemove_Colunm"/>
+    <addaction name="separator"/>
+    <addaction name="actionInsert_Child"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuAction"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionInsert_Row">
+   <property name="text">
+    <string>Insert Row</string>
+   </property>
+  </action>
+  <action name="actionInsert_Colunm">
+   <property name="text">
+    <string>Insert Colunm</string>
+   </property>
+  </action>
+  <action name="actionRemove_Row">
+   <property name="text">
+    <string>Remove Row</string>
+   </property>
+  </action>
+  <action name="actionRemove_Colunm">
+   <property name="text">
+    <string>Remove Column</string>
+   </property>
+  </action>
+  <action name="actionInsert_Child">
+   <property name="text">
+    <string>Insert Child</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
