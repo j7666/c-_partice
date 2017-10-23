@@ -20,8 +20,8 @@ TreeItem *TreeItem::child(int number) //返回特定的child项
 
 int TreeItem::childCount() const
 {
-    return childItems.size();
-    //return childItems->count();
+    //return childItems.size();
+    return childItems.count();
 }
 
 int TreeItem::columnCount() const
@@ -71,7 +71,7 @@ bool TreeItem::insertColumns(int position, int colunms)
 
 TreeItem *TreeItem::parent()
 {
-    return this->parent();
+    return parentItem;
 }
 
 bool TreeItem::removeChildren(int positon, int count, int column)
@@ -89,7 +89,7 @@ bool TreeItem::removeChildren(int positon, int count, int column)
 
 bool TreeItem::removeColumns(int position, int columns)
 {
-
+    return 0;
 }
 
 int TreeItem::childNumber() const
