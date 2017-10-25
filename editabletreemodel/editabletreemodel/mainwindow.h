@@ -9,16 +9,26 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow ,public Ui::MainWindow
+class MainWindow : public QMainWindow ,private Ui::MainWindow
 {
     Q_OBJECT
     
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void updateActions();
     
 private:
     //Ui::MainWindow *ui;
+
+private slots:
+    void insertChild();
+    bool insertColumn(const QModelIndex &parent = QModelIndex());
+    void insertRow();
+    bool removeColumn(const QModelIndex &parent = QModelIndex());
+    void removeRow();
 
 };
 
