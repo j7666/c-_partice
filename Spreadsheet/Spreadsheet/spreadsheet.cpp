@@ -70,7 +70,17 @@ void Spreadsheet::copy()
 
 void Spreadsheet::paste()
 {
-
+    QString str = QApplication::clipboard()->text();
+    QStringList rowStrList = str.split("\n");
+    QStringList columnStrList = "";
+    for(int i = 0; i < rowStrList.size(); ++i)
+    {
+        columnStrList = rowStrList.at(i);
+        for(int j = 0; j < columnStrList.size(); ++j)
+        {
+//
+        }
+    }
 }
 
 void Spreadsheet::del()
@@ -80,6 +90,21 @@ void Spreadsheet::del()
         foreach(QTableWidgetItem *item, items)
             delete item;
     somethingChanged();
+}
+
+QString Spreadsheet::currentLocation() const
+{
+    return QChar('A'+currentColumn())+ QString::number(currentRow() + 1);
+}
+
+QString Spreadsheet::currentFormula() const
+{
+
+}
+
+QString Spreadsheet::formula(int row, int column) const
+{
+
 }
 
 void Spreadsheet::somethingChanged()

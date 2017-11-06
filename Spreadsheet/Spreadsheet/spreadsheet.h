@@ -2,6 +2,7 @@
 #define SPREADSHEET_H
 
 #include <QTableWidget>
+#include <QString>
 
 class Spreadsheet : public QTableWidget
 {
@@ -11,14 +12,21 @@ public:
     void clear();
     QTableWidgetSelectionRange selectedRange()const;
 
+
 public:
     void cut();
     void copy();
     void paste();
     void del();
+    QString currentLocation() const;
+    QString currentFormula() const;
+    QString formula(int row, int column) const;
+
 
 signals:
     void modified();
+
+
 public slots:
 
     void somethingChanged();
