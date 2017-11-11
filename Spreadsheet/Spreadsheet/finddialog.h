@@ -6,13 +6,13 @@
 #include <QPushButton>
 #include <QDialog>
 
-class FindDialog
+class FindDialog : public QDialog
     {
     public:
-        FindDialog();
+        FindDialog(QWidget *parent = 0);
         bool isMatchCase;
         bool isSearchBackward;
-        QDialog dialog;
+
     private:
         QPushButton *Findbtn;
         QPushButton *Closebtn;
