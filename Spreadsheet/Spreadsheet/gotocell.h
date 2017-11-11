@@ -14,7 +14,7 @@ public:
 signals:
     
 private slots:
-    void EnableEditCellLoaction(QString &str);
+    void EnableEditCellLoaction(QString str);
     
 };
 

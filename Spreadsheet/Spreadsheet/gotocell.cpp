@@ -21,7 +21,7 @@ GotoCell::GotoCell(QWidget *parent) :
     connect(YesbuttonBox,SIGNAL(rejected()),this,SLOT(reject()));
 }
 
-void GotoCell::EnableEditCellLoaction(QString &str)
+void GotoCell::EnableEditCellLoaction(QString str)
 {
     //YesbuttonBox->button(QDialogButtonBox::Ok)->setEnabled( EditCellLocation->hasAcceptableInput() );
     YesbuttonBox->button(QDialogButtonBox::Ok)->setEnabled( true );
