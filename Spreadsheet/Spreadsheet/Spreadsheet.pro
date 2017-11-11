@@ -17,11 +17,13 @@ TRANSLATIONS = Spreadsheet_Zh_CN.ts
 SOURCES += main.cpp\
         mainwindow.cpp \
     spreadsheet.cpp \
-    cell.cpp
+    cell.cpp \
+    finddialog.cpp
 
 HEADERS  += mainwindow.h \
     spreadsheet.h \
-    cell.h
+    cell.h \
+    finddialog.h
 
 RESOURCES += \
     Spreadsheet.qrc

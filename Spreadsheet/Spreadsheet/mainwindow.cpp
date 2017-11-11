@@ -3,6 +3,7 @@
 #include <QToolBar>
 #include <QMessageBox>
 #include <QFileDialog>
+#include "finddialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -232,7 +233,8 @@ void MainWindow::slotSelectAll()
 
 void MainWindow::slotFind()
 {
-
+    FindDialog dialog;
+    dialog.dialog->exec();
 }
 
 void MainWindow::slotGoToCell()
