@@ -13,10 +13,11 @@ class FindDialog : public QDialog
         bool isMatchCase;
         bool isSearchBackward;
 
-    private:
         QPushButton *Findbtn;
         QPushButton *Closebtn;
         QLabel *label;
+        QLabel *label1;
+        QLabel *label2;
         QCheckBox *MatchCaseCBox;
         QCheckBox *SearchBackwardCBox;
         QLineEdit *EditWhat;

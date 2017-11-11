@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include "finddialog.h"
+#include "gotocell.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -234,12 +235,13 @@ void MainWindow::slotSelectAll()
 void MainWindow::slotFind()
 {
     FindDialog dialog;
-    dialog.dialog->exec();
+    dialog.exec();
 }
 
 void MainWindow::slotGoToCell()
 {
-
+    GotoCell gotocell;
+    gotocell.exec();
 }
 
 void MainWindow::slotRecalculate()

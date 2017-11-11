@@ -4,44 +4,32 @@
 
 FindDialog::FindDialog(QWidget *parent):QDialog(parent)
 {
-   QDialog dlg;
-   EditWhat = new QLineEdit;
-   label = new QLabel;
-   MatchCaseCBox = new QCheckBox;
-   SearchBackwardCBox = new QCheckBox;
-   Findbtn = new QPushButton;
-   Closebtn = new QPushButton;
 
-   QHBoxLayout *lay1;
-   lay1->addWidget(label);
-   lay1->addWidget(EditWhat);
+    EditWhat = new QLineEdit("Walter");
+    label = new QLabel("Find &What:");
+    MatchCaseCBox = new QCheckBox("Match &case");
+    SearchBackwardCBox = new QCheckBox("Search &backward");
+    Findbtn = new QPushButton("&Find");
+    Closebtn = new QPushButton("Close");
 
 
-   QVBoxLayout *lay2;
-   lay2->addLayout(lay1);
-   lay2->addWidget(MatchCaseCBox);
-   lay2->addWidget(SearchBackwardCBox);
+    QGridLayout *lay2 = new QGridLayout;
+    lay2->addWidget(label,0,0);
+    lay2->addWidget(EditWhat,0,1);
+    lay2->addWidget(MatchCaseCBox,1,0,1,2);
+    lay2->addWidget(SearchBackwardCBox,2,0,1,2);
 
-   QVBoxLayout *lay3;
-   lay3->addWidget(Findbtn);
-   lay3->addWidget(Closebtn);
-   lay3->addStretch();
+    QVBoxLayout *lay3 = new QVBoxLayout;
+    lay3->addWidget(Findbtn);
+    lay3->addWidget(Closebtn);
+    lay3->addStretch();
 
-   QHBoxLayout *lay;
-   lay->addLayout(lay2);
-   lay->addLayout(lay3);
+    QHBoxLayout *lay = new QHBoxLayout;
+    lay->addLayout(lay2);
+    lay->addLayout(lay3);
 
-    dlg.setLayout(lay);
-//   QGridLayout layout;
-//   layout.addLayout(lay1,0,0);
-//   layout.addWidget(MatchCaseCBox,1,0);
-//   layout.addWidget(SearchBackwardCBox,1,0);
+    this->setLayout(lay);
 
-//   layout.addWidget(Findbtn,0,1);
-//   layout.addWidget(Closebtn,2,1);
-
-
-
-
+    setFixedSize(sizeHint());
 
 }

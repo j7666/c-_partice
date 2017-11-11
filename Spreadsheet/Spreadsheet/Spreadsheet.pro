@@ -18,12 +18,17 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     spreadsheet.cpp \
     cell.cpp \
-    finddialog.cpp
+    finddialog.cpp \
+    gotocell.cpp
 
 HEADERS  += mainwindow.h \
     spreadsheet.h \
     cell.h \
-    finddialog.h
+    finddialog.h \
+    gotocell.h
 
 RESOURCES += \
     Spreadsheet.qrc
+
+FORMS += \
+    gotocelldialog.ui
