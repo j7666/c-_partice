@@ -2,8 +2,13 @@
 
 Cell::Cell()
 {
-    setDirty();
-}
+        setDirty();
+    }
+
+Cell::Cell(int row, int column)
+    {
+
+    }
 
 QString Cell::formula() const
 {
@@ -49,7 +54,7 @@ void Cell::setDirty()
 
 QTableWidgetItem *Cell::clone() const
 {
-    return new Cell(*this); //传入本cell的
+    return new Cell(*this); //锟斤拷锟诫本cell锟斤拷
 }
 const QVariant Invalid;
 QVariant Cell::value() const

@@ -10,7 +10,7 @@
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    
+
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -82,7 +82,7 @@ private slots:
     void slotRecalculate();
     void slotSort();
 
-    void slotShowGrid();
+    void slotShowGrid(bool checked);
     void slotAutoRecalculate();
 
     void slotAbout();

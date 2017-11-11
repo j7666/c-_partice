@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QClipboard>
-#include "cell.h"
+
 
 Spreadsheet::Spreadsheet(QWidget *parent) :
     QTableWidget(parent)
@@ -25,8 +25,6 @@ void Spreadsheet::clear()
         QTableWidgetItem *item = new QTableWidgetItem;
         item->setText(QString(QChar('A' + i)) );
         setHorizontalHeaderItem(i,item);
-        //for(int j = 0; j < RowCount; ++j)
-
     }
 
     setCurrentItem(0,0);
@@ -55,14 +53,17 @@ void Spreadsheet::copy()
     for(int i = 0; i < range.rowCount(); ++i)
     {
         if(i > 0)
-        str += "\n";
+        {
+            str += "\n";
+        }
+
         for(int j = 0; j < range.columnCount(); ++j )
         {
             if(j > 0 )
                 str +="\t";
+            str += formula( range.topRow() + i, range.leftColumn() + j );
         }
     }
-
     QApplication::clipboard()->setText(str);
 
 
@@ -70,16 +71,22 @@ void Spreadsheet::copy()
 
 void Spreadsheet::paste()
 {
+
     QString str = QApplication::clipboard()->text();
+    QMessageBox::information(0,"",str);
     QStringList rowStrList = str.split("\n");
-    QStringList columnStrList = "";
+    QString strColumn = "";
+
+    QTableWidgetSelectionRange range = selectedRange();
+    int leftColumn =  range.leftColumn();
+    int topRow =  range.topRow();
+
     for(int i = 0; i < rowStrList.size(); ++i)
     {
-        columnStrList = rowStrList.at(i);
-        for(int j = 0; j < columnStrList.size(); ++j)
-        {
-//
-        }
+        strColumn = rowStrList.at(i);
+        QStringList strListColumn = strColumn.split("\t");
+        for(int j = 0 ; j < strListColumn.size(); j++)
+            setFormula(topRow + i, leftColumn + j, strListColumn[j] );
     }
 }
 
@@ -99,10 +106,47 @@ QString Spreadsheet::currentLocation() const
 
 QString Spreadsheet::currentFormula() const
 {
-
+    return formula( currentRow(),currentColumn() );
 }
 
 QString Spreadsheet::formula(int row, int column) const
+{
+    Cell *c = cell(row, column);
+    if(!c)
+    {
+        return "";
+    }
+    return c->formula();
+}
+
+void Spreadsheet::setFormula(int row, int column, const QString &formula)
+{
+    Cell *c = cell(row, column);
+    if(!c)
+    {
+        c = new Cell;
+        setItem(row,column,c);
+    }
+    c->setFormula(formula);
+
+}
+
+Cell *Spreadsheet::cell(int row, int column) const
+{
+    return static_cast<Cell *>(item(row, column));
+}
+
+void Spreadsheet::selectcolumn()
+{
+    selectColumn(currentColumn());
+}
+
+void Spreadsheet::selectrow()
+{
+    selectRow(currentRow());
+}
+
+void Spreadsheet::showGrid(bool flag)
 {
 
 }

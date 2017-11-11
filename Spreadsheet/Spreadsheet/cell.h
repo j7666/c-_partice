@@ -7,6 +7,7 @@ class Cell : public QTableWidgetItem
 {
 public:
     Cell();
+    Cell(int row ,int column);
 
     QString formula() const;
     void setFormula(const QString &formula);
@@ -15,7 +16,7 @@ public:
     void setDirty();
 
     QTableWidgetItem *clone() const;
-        
+
 private:
     QVariant value() const;
     QVariant evalExpression(const QString &str, int &pos)const ;
@@ -24,7 +25,7 @@ private:
 
     mutable QVariant cacheValue;
     mutable bool cacheIsDirty;
-    
+
 };
 
 #endif // CELL_H

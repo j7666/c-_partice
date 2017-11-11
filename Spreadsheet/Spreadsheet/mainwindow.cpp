@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    
+
 }
 
 void MainWindow::initActions()
@@ -82,9 +82,12 @@ void MainWindow::initActions()
     connect(ActionSort, SIGNAL(triggered()), this, SLOT(slotSort()) );
 
     ActionShowGrid = new QAction(tr("Show Grid"), this);
-    connect(ActionShowGrid, SIGNAL(triggered()), this, SLOT(slotShowGrid()) );
+    ActionShowGrid->setCheckable(true);
+    ActionShowGrid->setChecked(true);
+    connect(ActionShowGrid, SIGNAL(triggered(bool)), this, SLOT(slotShowGrid(bool)) );
 
     ActionAutoRecalculate = new QAction(tr("Auto-Recalculate"), this);
+    ActionAutoRecalculate->setCheckable(true);
     connect(ActionAutoRecalculate, SIGNAL(triggered()), this, SLOT(slotAutoRecalculate()) );
 
     ActionAbout = new QAction(tr("About"), this);
@@ -92,14 +95,6 @@ void MainWindow::initActions()
 
     ActionAboutQt = new QAction(tr("About Qt"), this);
     connect(ActionAboutQt, SIGNAL(triggered()), this, SLOT(slotAboutQt()) );
-
-
-
-
-
-
-
-
 
 
 
@@ -220,17 +215,17 @@ void MainWindow::slotDelete()
 
 void MainWindow::slotSelectRow()
 {
-
+    spreadsheet->selectrow();
 }
 
 void MainWindow::slotSelectColumn()
 {
-
+    spreadsheet->selectcolumn();
 }
 
 void MainWindow::slotSelectAll()
 {
-
+    spreadsheet->selectAll();
 }
 
 
@@ -255,9 +250,10 @@ void MainWindow::slotSort()
 
 }
 
-void MainWindow::slotShowGrid()
+void MainWindow::slotShowGrid(bool checked)
 {
-
+    //QMessageBox::information(0, "" , QString::number(checked));
+     spreadsheet->setShowGrid(checked);
 }
 
 void MainWindow::slotAutoRecalculate()
