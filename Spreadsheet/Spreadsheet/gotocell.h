@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "ui_gotocelldialog.h"
-
+#include <QString>
 
 class GotoCell : public QDialog , public Ui_GotoCellDialog
 {

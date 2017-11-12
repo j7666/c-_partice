@@ -31,5 +31,30 @@ FindDialog::FindDialog(QWidget *parent):QDialog(parent)
     this->setLayout(lay);
 
     setFixedSize(sizeHint());
+    connect(Findbtn,SIGNAL(clicked()),this,SLOT(FindBtnClicked()) );
+    connect(Closebtn,SIGNAL(clicked()),this,SLOT(close()));
+
+}
+
+void FindDialog::FindBtnClicked()
+{
+    QString str = EditWhat->text();
+
+    Qt::CaseSensitivity cs;
+
+    if(MatchCaseCBox->isChecked())
+        cs = Qt::CaseSensitive;
+    else
+        cs = Qt::CaseInsensitive;
+
+    if(SearchBackwardCBox->isChecked())
+    {
+        emit findNext(str, cs);
+    }
+    else
+    {
+        emit findPrevious(str, cs);
+    }
+//    accept();//
 
 }

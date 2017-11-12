@@ -21,6 +21,7 @@ public:
     void del();
     QString currentLocation() const;
     QString currentFormula() const;
+    QString text(int row, int column) const;
     QString formula(int row, int column) const;
     void setFormula(int row , int column, const QString &formula);
     Cell *cell(int row ,int column) const;
@@ -36,6 +37,8 @@ signals:
 public slots:
 
     void somethingChanged();
+    void slotFindPrevious(const QString &str,Qt::CaseSensitivity cs);
+    void slotFindNext(const QString &str,Qt::CaseSensitivity cs);
 
 
 private:

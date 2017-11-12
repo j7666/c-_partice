@@ -3,8 +3,8 @@
 #include <QToolBar>
 #include <QMessageBox>
 #include <QFileDialog>
-#include "finddialog.h"
 #include "gotocell.h"
+#include "sortdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     spreadsheet = new Spreadsheet(this);
     setCentralWidget(spreadsheet);
-
+    dialog = NULL;
     resize(800,600);
 }
 
@@ -234,14 +234,29 @@ void MainWindow::slotSelectAll()
 
 void MainWindow::slotFind()
 {
-    FindDialog dialog;
-    dialog.exec();
+    if(!dialog)
+    {
+        dialog = new FindDialog;
+        connect(dialog,SIGNAL(findPrevious(QString ,Qt::CaseSensitivity)),spreadsheet,SLOT(slotFindPrevious(QString ,Qt::CaseSensitivity)) );
+        connect(dialog,SIGNAL(findNext(QString ,Qt::CaseSensitivity)),spreadsheet,SLOT(slotFindNext(QString ,Qt::CaseSensitivity)) );
+    }
+
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+
+
 }
 
 void MainWindow::slotGoToCell()
 {
     GotoCell gotocell;
-    gotocell.exec();
+    if(gotocell.exec())
+    {
+        QString str = gotocell.EditCellLocation->text().toUpper();
+        //QMessageBox::information(0,"",str);
+        spreadsheet->setCurrentCell(str.mid(1).toInt()-1, str[0].unicode()-'A' );
+    }
 }
 
 void MainWindow::slotRecalculate()
@@ -251,7 +266,10 @@ void MainWindow::slotRecalculate()
 
 void MainWindow::slotSort()
 {
-
+    SortDialog dlg;
+    dlg.exec();
+    //QMessageBox::information(0,"",dlg.cPrimaryColumn);
+    //QMessageBox::information(0,"",QString::number(dlg.bPrimaryOrder ));
 }
 
 void MainWindow::slotShowGrid(bool checked)

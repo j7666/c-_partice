@@ -6,6 +6,7 @@
 #include <QMenu>
 
 #include "spreadsheet.h"
+#include "finddialog.h"
 
 class MainWindow : public QMainWindow
 {
@@ -61,6 +62,9 @@ private:
     //Toolbar
     QToolBar *toolbar;
 
+    FindDialog *dialog;
+
+
 private slots:
     void slotNewFile();
     void slotOpenFile();
@@ -87,6 +91,8 @@ private slots:
 
     void slotAbout();
     void slotAboutQt();
+
+
 
 
 };

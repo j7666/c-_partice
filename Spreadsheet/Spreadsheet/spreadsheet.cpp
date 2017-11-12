@@ -109,6 +109,16 @@ QString Spreadsheet::currentFormula() const
     return formula( currentRow(),currentColumn() );
 }
 
+QString Spreadsheet::text(int row, int column) const
+{
+    Cell *c = cell(row, column);
+    if(!c)
+    {
+        return "";
+    }
+    return c->text();
+}
+
 QString Spreadsheet::formula(int row, int column) const
 {
     Cell *c = cell(row, column);
@@ -154,4 +164,56 @@ void Spreadsheet::showGrid(bool flag)
 void Spreadsheet::somethingChanged()
 {
     emit modified();
+}
+
+void Spreadsheet::slotFindPrevious(const QString &str, Qt::CaseSensitivity cs)
+{
+    //QMessageBox::information(0,"1",str);
+    int row = currentRow();
+    int column = currentColumn() - 1;
+    while(row >= 0)
+    {
+        while(column >= 0 )
+        {
+            if(text(row,column).contains(str,cs))
+            {
+                //clearSelection();
+                setCurrentCell(row,column);
+                activateWindow();
+                return;
+            }
+            --column;
+        }
+        column = ColumnCount - 1;
+        --row;
+    }
+    QApplication::beep();
+
+}
+
+void Spreadsheet::slotFindNext(const QString &str, Qt::CaseSensitivity cs)
+{
+    //QMessageBox::information(0,"2",str);
+    int row = currentRow();
+    int column = currentColumn() + 1;
+    while(row < RowCount)
+    {
+        while(column < ColumnCount)
+        {
+            if(text(row,column).contains(str,cs))
+            {
+                //clearSelection();
+                setCurrentCell(row,column);
+                activateWindow();
+                return;
+            }
+            ++column;
+        }
+        column = 0;
+        ++row;
+    }
+    QApplication::beep();
+
+
+
 }
