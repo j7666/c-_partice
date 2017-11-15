@@ -161,6 +161,20 @@ void Spreadsheet::showGrid(bool flag)
 
 }
 
+void Spreadsheet::AutoRecalculate()
+{
+    for(int i = 0; i < RowCount; i ++ )
+    {
+        for(int j = 0; j < ColumnCount; j++ )
+        {
+            Cell *cell = cell(i , j);
+            cell->setDirty();
+        }
+    }
+
+    viewport()->update(); //更新显示的数据
+}
+
 void Spreadsheet::somethingChanged()
 {
     emit modified();

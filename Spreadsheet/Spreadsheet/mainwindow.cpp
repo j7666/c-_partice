@@ -261,7 +261,7 @@ void MainWindow::slotGoToCell()
 
 void MainWindow::slotRecalculate()
 {
-
+    spreadsheet->AutoRecalculate();
 }
 
 void MainWindow::slotSort()
@@ -280,7 +280,7 @@ void MainWindow::slotShowGrid(bool checked)
 
 void MainWindow::slotAutoRecalculate()
 {
-
+    spreadsheet->AutoRecalculate();
 }
 
 void MainWindow::slotAbout()

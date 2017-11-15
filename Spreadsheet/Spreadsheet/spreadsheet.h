@@ -28,6 +28,7 @@ public:
     void selectcolumn();
     void selectrow();
     void showGrid(bool flag);
+    void AutoRecalculate();
 
 
 signals:
