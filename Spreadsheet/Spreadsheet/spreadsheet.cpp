@@ -11,6 +11,7 @@ Spreadsheet::Spreadsheet(QWidget *parent) :
     setSelectionMode(ContiguousSelection);
     connect(this,SIGNAL(itemChanged(QTableWidgetItem*)),this,SLOT(somethingChanged()));
     clear();
+    bAutoRecacl = false;
 }
 
 void Spreadsheet::clear()
@@ -167,7 +168,8 @@ void Spreadsheet::AutoRecalculate()
     {
         for(int j = 0; j < ColumnCount; j++ )
         {
-            Cell *cell = cell(i , j);
+            Cell *cell;
+            cell = this->cell(i , j);
             cell->setDirty();
         }
     }
@@ -175,8 +177,16 @@ void Spreadsheet::AutoRecalculate()
     viewport()->update(); //更新显示的数据
 }
 
+void Spreadsheet::sort(const SpreadsheetCompare &compare)
+{
+
+}
+
 void Spreadsheet::somethingChanged()
 {
+    if(bAutoRecacl)
+        AutoRecalculate();
+
     emit modified();
 }
 
@@ -228,6 +238,11 @@ void Spreadsheet::slotFindNext(const QString &str, Qt::CaseSensitivity cs)
     }
     QApplication::beep();
 
+}
 
-
+void Spreadsheet::slotSetAutoRecalc(bool recalc)
+{
+    bAutoRecacl = recalc;
+    if(bAutoRecacl)
+        AutoRecalculate();
 }

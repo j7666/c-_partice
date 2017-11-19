@@ -5,6 +5,7 @@
 #include <QString>
 #include "cell.h"
 
+class SpreadsheetCompare;
 class Spreadsheet : public QTableWidget
 {
     Q_OBJECT
@@ -29,6 +30,7 @@ public:
     void selectrow();
     void showGrid(bool flag);
     void AutoRecalculate();
+    void sort(const SpreadsheetCompare &compare);
 
 
 signals:
@@ -41,9 +43,13 @@ public slots:
     void slotFindPrevious(const QString &str,Qt::CaseSensitivity cs);
     void slotFindNext(const QString &str,Qt::CaseSensitivity cs);
 
+    void slotSetAutoRecalc(bool recalc);
+
 
 private:
     enum {MagicNumber = 0x7F51C883, RowCount = 999, ColumnCount = 26};
+
+    bool bAutoRecacl;
 
 };
 

@@ -5,17 +5,23 @@
 #include <QFileDialog>
 #include "gotocell.h"
 #include "sortdialog.h"
+#include "spreadsheetcompare.h"
 
+class SpreadsheetCompare;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    initActions();
-    initMenu();
-    initTool();
+
 
     spreadsheet = new Spreadsheet(this);
     setCentralWidget(spreadsheet);
     dialog = NULL;
+
+
+    initActions();
+    initMenu();
+    initTool();
+
     resize(800,600);
 }
 
@@ -90,7 +96,7 @@ void MainWindow::initActions()
 
     ActionAutoRecalculate = new QAction(tr("Auto-Recalculate"), this);
     ActionAutoRecalculate->setCheckable(true);
-    connect(ActionAutoRecalculate, SIGNAL(triggered()), this, SLOT(slotAutoRecalculate()) );
+    connect(ActionAutoRecalculate, SIGNAL(triggered(bool)), spreadsheet, SLOT(slotSetAutoRecalc(bool)) );
 
     ActionAbout = new QAction(tr("About"), this);
     connect(ActionAbout, SIGNAL(triggered()), this, SLOT(slotAbout()) );
@@ -267,7 +273,23 @@ void MainWindow::slotRecalculate()
 void MainWindow::slotSort()
 {
     SortDialog dlg;
-    dlg.exec();
+
+    QTableWidgetSelectionRange range = spreadsheet->selectedRange();
+    dlg.setColumnRange('A'+range.leftColumn(),'A'+range.rightColumn());
+
+    if(dlg.exec())
+    {
+        SpreadsheetCompare compare;
+        compare.keys[0] = dlg.cPrimaryColumn.toInt();
+        compare.keys[1] = dlg.cSecondColumn.toInt();
+        compare.keys[2] = dlg.cTertiaryColumn.toInt();
+
+        compare.ascending[0] = dlg.bPrimaryOrder;
+        compare.ascending[1] = dlg.bSecondOrder;
+        compare.ascending[2] = dlg.bTertiaryOrder;
+
+        spreadsheet->sort(compare);
+    }
     //QMessageBox::information(0,"",dlg.cPrimaryColumn);
     //QMessageBox::information(0,"",QString::number(dlg.bPrimaryOrder ));
 }
@@ -278,10 +300,6 @@ void MainWindow::slotShowGrid(bool checked)
      spreadsheet->setShowGrid(checked);
 }
 
-void MainWindow::slotAutoRecalculate()
-{
-    spreadsheet->AutoRecalculate();
-}
 
 void MainWindow::slotAbout()
 {

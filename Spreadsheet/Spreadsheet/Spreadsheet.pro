@@ -20,14 +20,16 @@ SOURCES += main.cpp\
     cell.cpp \
     finddialog.cpp \
     gotocell.cpp \
-    sortdialog.cpp
+    sortdialog.cpp \
+    spreadsheetcompare.cpp
 
 HEADERS  += mainwindow.h \
     spreadsheet.h \
     cell.h \
     finddialog.h \
     gotocell.h \
-    sortdialog.h
+    sortdialog.h \
+    spreadsheetcompare.h
 
 RESOURCES += \
     Spreadsheet.qrc

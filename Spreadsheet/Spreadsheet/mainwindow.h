@@ -8,6 +8,7 @@
 #include "spreadsheet.h"
 #include "finddialog.h"
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -19,6 +20,7 @@ public:
     void initActions();
     void initMenu();
     void initTool();
+    bool bAutoRecalc;
 
 private:
     Spreadsheet *spreadsheet;
@@ -87,7 +89,6 @@ private slots:
     void slotSort();
 
     void slotShowGrid(bool checked);
-    void slotAutoRecalculate();
 
     void slotAbout();
     void slotAboutQt();
