@@ -242,7 +242,7 @@ void MainWindow::slotFind()
 {
     if(!dialog)
     {
-        dialog = new FindDialog;
+        dialog = new FindDialog(this);
         connect(dialog,SIGNAL(findPrevious(QString ,Qt::CaseSensitivity)),spreadsheet,SLOT(slotFindPrevious(QString ,Qt::CaseSensitivity)) );
         connect(dialog,SIGNAL(findNext(QString ,Qt::CaseSensitivity)),spreadsheet,SLOT(slotFindNext(QString ,Qt::CaseSensitivity)) );
     }
@@ -256,7 +256,7 @@ void MainWindow::slotFind()
 
 void MainWindow::slotGoToCell()
 {
-    GotoCell gotocell;
+    GotoCell gotocell(this);
     if(gotocell.exec())
     {
         QString str = gotocell.EditCellLocation->text().toUpper();
@@ -303,10 +303,10 @@ void MainWindow::slotShowGrid(bool checked)
 
 void MainWindow::slotAbout()
 {
-
+    QMessageBox::about(this,tr("about"),"jialw\n2017-11-22");
 }
 
 void MainWindow::slotAboutQt()
 {
-
+    QMessageBox::aboutQt(this,tr("about"));
 }

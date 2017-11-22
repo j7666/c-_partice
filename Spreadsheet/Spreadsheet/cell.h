@@ -7,7 +7,6 @@ class Cell : public QTableWidgetItem
 {
 public:
     Cell();
-    Cell(int row ,int column);
 
     QString formula() const;
     void setFormula(const QString &formula);

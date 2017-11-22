@@ -112,7 +112,7 @@ QString Spreadsheet::currentFormula() const
 
 QString Spreadsheet::text(int row, int column) const
 {
-    Cell *c = cell(row, column);
+    Cell *c = celled(row, column);
     if(!c)
     {
         return "";
@@ -122,7 +122,7 @@ QString Spreadsheet::text(int row, int column) const
 
 QString Spreadsheet::formula(int row, int column) const
 {
-    Cell *c = cell(row, column);
+    Cell *c = celled(row, column);
     if(!c)
     {
         return "";
@@ -132,7 +132,7 @@ QString Spreadsheet::formula(int row, int column) const
 
 void Spreadsheet::setFormula(int row, int column, const QString &formula)
 {
-    Cell *c = cell(row, column);
+    Cell *c = celled(row, column);
     if(!c)
     {
         c = new Cell;
@@ -142,7 +142,7 @@ void Spreadsheet::setFormula(int row, int column, const QString &formula)
 
 }
 
-Cell *Spreadsheet::cell(int row, int column) const
+Cell *Spreadsheet::celled(int row, int column) const
 {
     return static_cast<Cell *>(item(row, column));
 }
@@ -168,9 +168,9 @@ void Spreadsheet::AutoRecalculate()
     {
         for(int j = 0; j < ColumnCount; j++ )
         {
-            Cell *cell;
-            cell = this->cell(i , j);
-            cell->setDirty();
+            Cell *cell = celled(i , j);
+            if(cell)
+                cell->setDirty();
         }
     }
 

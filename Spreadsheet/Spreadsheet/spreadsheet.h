@@ -25,7 +25,7 @@ public:
     QString text(int row, int column) const;
     QString formula(int row, int column) const;
     void setFormula(int row , int column, const QString &formula);
-    Cell *cell(int row ,int column) const;
+    Cell *celled(int row ,int column) const;
     void selectcolumn();
     void selectrow();
     void showGrid(bool flag);

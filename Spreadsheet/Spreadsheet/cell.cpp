@@ -2,13 +2,10 @@
 
 Cell::Cell()
 {
-        setDirty();
-    }
+    setDirty();
+}
 
-Cell::Cell(int row, int column)
-    {
 
-    }
 
 QString Cell::formula() const
 {
@@ -56,40 +53,44 @@ QTableWidgetItem *Cell::clone() const
 {
     return new Cell(*this); //���뱾cell��
 }
+
+
 const QVariant Invalid;
 QVariant Cell::value() const
 {
     if(cacheIsDirty)
+    {
         cacheIsDirty = false;
-    QString formulaStr = formula();
-    if(formulaStr.startsWith('\''))
-    {
-        cacheValue = formulaStr.mid(1);
-    }
-    else if(formulaStr.startsWith('='))
-    {
-        cacheValue = Invalid;
-        QString expr = formulaStr.mid(1);
-        expr.replace(" ", "");
-        expr.append(QChar::Null);
-
-        int pos = 0;
-        cacheValue = evalExpression(expr, pos);
-        if(expr[pos] != QChar::Null)
+        QString formulaStr = formula();
+        if(formulaStr.startsWith('\''))
+        {
+            cacheValue = formulaStr.mid(1);
+        }
+        else if(formulaStr.startsWith('='))
+        {
             cacheValue = Invalid;
+            QString expr = formulaStr.mid(1);
+            expr.replace(" ", "");
+            expr.append(QChar::Null);
 
-    }
-    else
-    {
-        bool ok;
-        double d = formulaStr.toDouble(&ok);
-        if(ok)
-            cacheValue = d;
+            int pos = 0;
+            cacheValue = evalExpression(expr, pos);
+            if(expr[pos] != QChar::Null)
+                cacheValue = Invalid;
+
+        }
         else
-            cacheValue = formulaStr;
+        {
+            bool ok;
+            double d = formulaStr.toDouble(&ok);
+            if(ok)
+                cacheValue = d;
+            else
+                cacheValue = formulaStr;
+        }
     }
-
     return cacheValue;
+
 }
 
 QVariant Cell::evalExpression(const QString &str, int &pos) const
