@@ -20,6 +20,8 @@ public:
     void initActions();
     void initMenu();
     void initTool();
+    bool isModify() {return bIsModify;}
+    void setModify(bool isModify) {bIsModify = isModify;}
     bool bAutoRecalc;
 
 private:
@@ -29,7 +31,7 @@ private:
     QAction *ActionOpen;
     QAction *ActionSave;
     QAction *ActionSaveAs;
-    QActionGroup *ActionGroupRecentFile;
+    QActionGroup *ActionRecentFile[5];
     QAction *ActionExit;
 
     QAction *ActionCut;
@@ -65,6 +67,8 @@ private:
     QToolBar *toolbar;
 
     FindDialog *dialog;
+    QString strCurrentFileName;
+    bool bIsModify;
 
 
 private slots:

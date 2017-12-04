@@ -6,17 +6,18 @@
 #include "gotocell.h"
 #include "sortdialog.h"
 #include "spreadsheetcompare.h"
+#include <QTextStream>
+#include <QFile>
 
 class SpreadsheetCompare;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-
-
     spreadsheet = new Spreadsheet(this);
     setCentralWidget(spreadsheet);
     dialog = NULL;
-
+    strCurrentFileName = "";
+    bIsModify = false;
 
     initActions();
     initMenu();
@@ -48,8 +49,12 @@ void MainWindow::initActions()
     ActionSaveAs->setIcon(QPixmap(":/images/filesave.png"));
     connect(ActionSaveAs, SIGNAL(triggered()), this, SLOT(slotSaveAsFile()) );
 
-    ActionGroupRecentFile = new QActionGroup(this);
-    connect(ActionGroupRecentFile, SIGNAL(triggered(QAction*)), this, SLOT(slotRecentFile()) );
+    for(int i = 0; i < 5; i++)
+    {
+        ActionRecentFile[i] = new QAction(this);
+        connect(ActionRecentFile[i], SIGNAL(triggered(QAction*)), this, SLOT(slotRecentFile()) );
+    }
+
 
     ActionExit = new QAction(tr("exit"), this);
     connect(ActionExit, SIGNAL(triggered()), this, SLOT(slotExit()) );
@@ -117,7 +122,7 @@ void MainWindow::initMenu()
     MenuFile->addAction(ActionSaveAs);
     MenuFile->addSeparator();
     //MenuFile->addSeparator();
-    //MenuFile->addAction(ActionGroupRecentFile);
+    MenuFile->addActions(ActionGroupRecentFile);
     MenuFile->addAction(ActionExit);
 
 
@@ -173,15 +178,55 @@ void MainWindow::slotNewFile()
 
 void MainWindow::slotOpenFile()
 {
+    setModify(true);
+    if(isModify())
+    {
+        bool ret = QMessageBox::question(this,tr("warning"),"File is modify,do you want to save?",QString("Save"),QString("Don't Save"));
+        if(!ret)
+        {
+            slotSaveFile();
+        }
 
-    QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "", QString("spreadsheet(*.sp,*.sps)"));
-    //按照格式读取文件。
+        QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "", QString("spreadsheet(*.sp *.sps)"));
+        if(filename.isEmpty())
+        {
+            return;
+        }
+
+        QFile file(filename);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QMessageBox::warning(this,tr("warning"),"Open File failed!");
+            return;
+        }
+
+        QTextStream out(&file);
+        out << "The magic number is: " << 49 << "\n";
+
+        strCurrentFileName = filename;
+        ActionGroupRecentFile->addAction( strCurrentFileName );
+
+
+    }
+
 }
 
 void MainWindow::slotSaveFile()
 {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "D:", QString("spreadsheet(*.sp,*.sps)") );
     //按照格式写文件。
+    if(!filename.isEmpty())
+    {
+        QFile file(filename);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QMessageBox::warning(this,tr("warning"),"Open File failed!");
+                    return;
+        }
+
+        QTextStream out(&file);
+        out << "The magic number is: " << 49 << "\n";
+    }
 }
 
 void MainWindow::slotSaveAsFile()
