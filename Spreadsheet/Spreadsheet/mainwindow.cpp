@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     dialog = NULL;
     strCurrentFileName = "";
     bIsModify = false;
+    Recentfiles.clear();
 
     initActions();
     initMenu();
@@ -52,7 +53,8 @@ void MainWindow::initActions()
     for(int i = 0; i < 5; i++)
     {
         ActionRecentFile[i] = new QAction(this);
-        connect(ActionRecentFile[i], SIGNAL(triggered(QAction*)), this, SLOT(slotRecentFile()) );
+        connect(ActionRecentFile[i], SIGNAL(triggered(bool)), this, SLOT(slotRecentFile()) );
+        ActionRecentFile[i]->setVisible(false);
     }
 
 
@@ -122,7 +124,11 @@ void MainWindow::initMenu()
     MenuFile->addAction(ActionSaveAs);
     MenuFile->addSeparator();
     //MenuFile->addSeparator();
-    MenuFile->addActions(ActionGroupRecentFile);
+    for(int i = 0; i < 5; i++)
+    {
+        MenuFile->addAction(ActionRecentFile[i]);
+    }
+
     MenuFile->addAction(ActionExit);
 
 
@@ -171,6 +177,46 @@ void MainWindow::initTool()
 
 }
 
+bool MainWindow::loadFile(const QString &strfilename)
+{
+    QFile file(strfilename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this,tr("warning"),"Open File failed!");
+        return false;
+    }
+
+    QTextStream out(&file);
+    out << "The magic number is: " << 49 << "\n";
+    QMessageBox::warning(this,tr("warning"),"Open File success!");
+    return true;
+
+}
+
+void MainWindow::updateRecentFiles(const QString &filename)
+{
+        //move down
+        //del chong fu
+        //del wuxiao
+    if(filename.isEmpty())
+    {
+        return;
+    }
+    Recentfiles.removeAll(filename);
+    Recentfiles.prepend(filename);
+
+    QStringListIterator iterator(Recentfiles );
+    while(iterator.hasNext())
+    {
+        QString strfilename = iterator.next();
+        if(!(QFile::exists(strfilename)))
+            Recentfiles.removeOne(strfilename);
+    }
+
+    updateRecentActions();
+
+}
+
 void MainWindow::slotNewFile()
 {
     QMessageBox::information(this, "TEST", "NEW FILE");
@@ -193,19 +239,9 @@ void MainWindow::slotOpenFile()
             return;
         }
 
-        QFile file(filename);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QMessageBox::warning(this,tr("warning"),"Open File failed!");
+        if(!loadFile(filename))
             return;
-        }
-
-        QTextStream out(&file);
-        out << "The magic number is: " << 49 << "\n";
-
-        strCurrentFileName = filename;
-        ActionGroupRecentFile->addAction( strCurrentFileName );
-
+        updateRecentFiles(filename);
 
     }
 
@@ -221,7 +257,7 @@ void MainWindow::slotSaveFile()
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         {
             QMessageBox::warning(this,tr("warning"),"Open File failed!");
-                    return;
+            return;
         }
 
         QTextStream out(&file);
@@ -237,6 +273,8 @@ void MainWindow::slotSaveAsFile()
 
 void MainWindow::slotRecentFile()
 {
+    QAction *action = qobject_cast<QAction *>(sender());
+    QMessageBox::warning(this,"", action->text());
 
 }
 
@@ -342,7 +380,7 @@ void MainWindow::slotSort()
 void MainWindow::slotShowGrid(bool checked)
 {
     //QMessageBox::information(0, "" , QString::number(checked));
-     spreadsheet->setShowGrid(checked);
+    spreadsheet->setShowGrid(checked);
 }
 
 
@@ -354,4 +392,19 @@ void MainWindow::slotAbout()
 void MainWindow::slotAboutQt()
 {
     QMessageBox::aboutQt(this,tr("about"));
+}
+
+void MainWindow::updateRecentActions()
+{
+    for(int i = 0; i < 5; i++)
+    {
+        if(i < Recentfiles.size())
+        {
+        ActionRecentFile[i]->setText(Recentfiles[i]);
+        ActionRecentFile[i]->setVisible(true);
+        }
+//        else
+//            ActionRecentFile[i]
+
+    }
 }

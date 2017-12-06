@@ -22,6 +22,9 @@ public:
     void initTool();
     bool isModify() {return bIsModify;}
     void setModify(bool isModify) {bIsModify = isModify;}
+    bool loadFile(const QString &strfilename);
+    void updateRecentFiles(const QString &filename);
+    void updateRecentActions();
     bool bAutoRecalc;
 
 private:
@@ -31,7 +34,7 @@ private:
     QAction *ActionOpen;
     QAction *ActionSave;
     QAction *ActionSaveAs;
-    QActionGroup *ActionRecentFile[5];
+    QAction *ActionRecentFile[5];
     QAction *ActionExit;
 
     QAction *ActionCut;
@@ -69,6 +72,7 @@ private:
     FindDialog *dialog;
     QString strCurrentFileName;
     bool bIsModify;
+    QStringList Recentfiles;
 
 
 private slots:
