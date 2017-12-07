@@ -26,6 +26,7 @@ public:
     void updateRecentFiles(const QString &filename);
     void updateRecentActions();
     bool bAutoRecalc;
+    void Savefile(const QString &filename);
 
 private:
     Spreadsheet *spreadsheet;

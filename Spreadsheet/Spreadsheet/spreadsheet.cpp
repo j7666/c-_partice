@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QClipboard>
+#include <QFile>
+#include <QDebug>
 
 
 Spreadsheet::Spreadsheet(QWidget *parent) :
@@ -245,4 +247,70 @@ void Spreadsheet::slotSetAutoRecalc(bool recalc)
     bAutoRecacl = recalc;
     if(bAutoRecacl)
         AutoRecalculate();
+}
+
+bool Spreadsheet::readFile(const QString &filename)
+{
+    QFile file(filename);
+    if( !file.open(QIODevice::ReadOnly ))
+    {
+        return false;
+    }
+
+    QDataStream in(&file);
+    in.setVersion(QDataStream::Qt_4_8 );
+    quint32 magic;
+    in >> magic;
+    if(MagicNumber != magic)
+    {
+        return false;
+    }
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    while(!in.atEnd())
+    {
+        quint16 row;
+        quint16 col;
+        QString str;
+        in >> row >> col >> str;
+
+        setFormula(row,col,str);
+    }
+
+    QApplication::restoreOverrideCursor();
+
+
+    return true;
+
+}
+
+bool Spreadsheet::writeFile(const QString &filename)
+{
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::warning(this,tr("warning"),"Open File failed!");
+        return false ;
+    }
+
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_4_8);
+    out << quint32(MagicNumber);
+    QApplication::setOverrideCursor(Qt::WaitCursor );
+
+    for(int row = 0; row < RowCount; row++)
+    {
+        for(int column = 0; column < ColumnCount; column++ )
+        {
+             QString str = formula( row , column );
+             //qDebug()<< row << " " << column << str << endl;
+             out << quint16(row) << quint16(column) << str;
+        }
+
+    }
+
+    QApplication::restoreOverrideCursor();
+    return true;
+
 }

@@ -31,6 +31,8 @@ public:
     void showGrid(bool flag);
     void AutoRecalculate();
     void sort(const SpreadsheetCompare &compare);
+    bool readFile(const QString &filename);
+    bool writeFile(const QString &filename);
 
 
 signals:
@@ -50,6 +52,7 @@ private:
     enum {MagicNumber = 0x7F51C883, RowCount = 999, ColumnCount = 26};
 
     bool bAutoRecacl;
+
 
 };
 

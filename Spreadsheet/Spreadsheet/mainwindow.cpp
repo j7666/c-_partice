@@ -8,6 +8,7 @@
 #include "spreadsheetcompare.h"
 #include <QTextStream>
 #include <QFile>
+#include <QDebug>
 
 class SpreadsheetCompare;
 MainWindow::MainWindow(QWidget *parent)
@@ -179,16 +180,10 @@ void MainWindow::initTool()
 
 bool MainWindow::loadFile(const QString &strfilename)
 {
-    QFile file(strfilename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    if( !spreadsheet->readFile(strfilename) )
     {
-        QMessageBox::warning(this,tr("warning"),"Open File failed!");
         return false;
     }
-
-    QTextStream out(&file);
-    out << "The magic number is: " << 49 << "\n";
-    QMessageBox::warning(this,tr("warning"),"Open File success!");
     return true;
 
 }
@@ -240,7 +235,12 @@ void MainWindow::slotOpenFile()
         }
 
         if(!loadFile(filename))
+        {
+            qDebug()<< "loadFile failed" << endl;
             return;
+        }
+
+        setWindowTitle(QFileInfo(filename).fileName());
         updateRecentFiles(filename);
 
     }
@@ -253,16 +253,13 @@ void MainWindow::slotSaveFile()
     //按照格式写文件。
     if(!filename.isEmpty())
     {
-        QFile file(filename);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QMessageBox::warning(this,tr("warning"),"Open File failed!");
-            return;
-        }
-
-        QTextStream out(&file);
-        out << "The magic number is: " << 49 << "\n";
+        Savefile(filename);
     }
+}
+
+void MainWindow::Savefile(const QString &filename)
+{
+   spreadsheet->writeFile(filename);
 }
 
 void MainWindow::slotSaveAsFile()
