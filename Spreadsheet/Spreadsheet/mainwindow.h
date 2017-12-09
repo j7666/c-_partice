@@ -30,6 +30,8 @@ public:
     void Savefile(const QString &filename);
     void closeEvent(QCloseEvent *);
     bool okToContinue();
+    void updatewindowtitle();
+    void setCurrentFile(const QString &file);
 private:
     Spreadsheet *spreadsheet;
 

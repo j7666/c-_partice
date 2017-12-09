@@ -18,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     spreadsheet = new Spreadsheet(this);
     setCentralWidget(spreadsheet);
     dialog = NULL;
-    strCurrentFileName = "";
+    bIsModify = false;
+    setCurrentFile("");
     Recentfiles.clear();
 
     initActions();
@@ -26,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     initTool();
     initStatusbar();
     connect(spreadsheet,SIGNAL(modified()),this,SLOT(slotSpreadmodify()) );
-    bIsModify = false;
+
     resize(800,600);
 }
 
@@ -201,12 +202,32 @@ bool MainWindow::loadFile(const QString &strfilename)
     {
         return false;
     }
-    strCurrentFileName = strfilename;
     setModify(false);
-    setWindowTitle(QFileInfo(strCurrentFileName).fileName());
-    updateRecentFiles(strCurrentFileName);
+    setCurrentFile(strfilename);
     return true;
 
+}
+
+
+
+void MainWindow::setCurrentFile(const QString &file)
+{
+    if(file.isEmpty())
+    {
+        QString strtitle = "untitled";
+        setWindowTitle(strtitle);
+        strCurrentFileName = "";
+    }
+    else
+    {
+        strCurrentFileName = file;
+        setWindowTitle(QFileInfo(file).fileName());
+    }
+
+
+    updatewindowtitle();
+
+    updateRecentFiles(strCurrentFileName);
 }
 
 void MainWindow::updateRecentFiles(const QString &filename)
@@ -235,7 +256,10 @@ void MainWindow::updateRecentFiles(const QString &filename)
 
 void MainWindow::slotNewFile()
 {
-    QMessageBox::information(this, "TEST", "NEW FILE");
+    if(okToContinue())
+        spreadsheet->clear();
+    setCurrentFile("");
+    //setModify(true);
 }
 
 void MainWindow::slotOpenFile()
@@ -278,15 +302,7 @@ void MainWindow::Savefile(const QString &filename)
    spreadsheet->writeFile(filename);
    statusBar()->showMessage("File Saved",1000);
    setModify(false);
-
-   QString title = windowTitle();
-   if(!title.contains('*'))
-       return;
-   else
-   {
-       QString newtitle = title.remove('*');
-       setWindowTitle(newtitle);
-   }
+   updatewindowtitle();
 
 }
 
@@ -316,11 +332,37 @@ bool MainWindow::okToContinue()
 
 }
 
+void MainWindow::updatewindowtitle()
+{
+    QString title = windowTitle();
+
+    if(!isModify())  //no modify
+    {
+        if(!title.contains('*'))
+            return;
+        else
+        {
+            QString newtitle = title.remove('*');
+            setWindowTitle(newtitle);
+        }
+    }
+    else {
+        if(title.contains('*'))
+            return;
+        else
+        {
+            QString newtitle = title + '*';
+            setWindowTitle(newtitle);
+        }
+    }
+}
+
 void MainWindow::slotSaveAsFile()
 {
         QString filename = QFileDialog::getSaveFileName(this, tr("Save As"), "D:", QString("spreadsheet(*.sp,*.sps)") );
         if(!filename.isEmpty())
             Savefile(filename);
+        setCurrentFile(filename);
 
 }
 
@@ -452,21 +494,11 @@ void MainWindow::slotAboutQt()
 
 void MainWindow::slotSpreadmodify()
 {
-    if(strCurrentFileName.isEmpty())
-        return;
+//    if(strCurrentFileName.isEmpty())
+//        return;
     setModify(true);
+    updatewindowtitle();
     slotUpdateStatusBar();
-    QString title = windowTitle();
-    if(title.contains('*'))
-        return;
-    else
-    {
-        QString newtitle = title + '*';
-        setWindowTitle(newtitle);
-    }
-
-
-
 }
 
 void MainWindow::slotUpdateStatusBar()
