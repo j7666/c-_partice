@@ -39,6 +39,7 @@ signals:
     void modified();
 
 
+
 public slots:
 
     void somethingChanged();

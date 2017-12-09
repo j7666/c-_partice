@@ -7,7 +7,7 @@
 
 #include "spreadsheet.h"
 #include "finddialog.h"
-
+#include <QStatusBar>
 
 class MainWindow : public QMainWindow
 {
@@ -20,6 +20,7 @@ public:
     void initActions();
     void initMenu();
     void initTool();
+    void initStatusbar();
     bool isModify() {return bIsModify;}
     void setModify(bool isModify) {bIsModify = isModify;}
     bool loadFile(const QString &strfilename);
@@ -71,6 +72,14 @@ private:
     //Toolbar
     QToolBar *toolbar;
 
+    //Statusbar
+    //不能定义QStatusBar *statusBar 指针
+    //否则会出现编译错误：error C2064: 项不会计算为接受 0 个参数的函数
+
+    QLabel *label1;
+    QLabel *label2;
+
+
     FindDialog *dialog;
     QString strCurrentFileName;
     bool bIsModify;
@@ -104,6 +113,7 @@ private slots:
     void slotAboutQt();
 
     void slotSpreadmodify();
+    void slotUpdateStatusBar();
 
 
 

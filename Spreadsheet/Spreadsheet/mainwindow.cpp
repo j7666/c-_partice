@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QDebug>
 
+
 class SpreadsheetCompare;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     initActions();
     initMenu();
     initTool();
+    initStatusbar();
     connect(spreadsheet,SIGNAL(modified()),this,SLOT(slotSpreadmodify()) );
     bIsModify = false;
     resize(800,600);
@@ -178,6 +180,21 @@ void MainWindow::initTool()
 
 }
 
+void MainWindow::initStatusbar()
+{
+    label1 = new QLabel("W999");
+    label1->setAlignment(Qt::AlignCenter | Qt::AlignHCenter);
+    label1->setMinimumSize(label1->sizeHint());
+    label2 = new QLabel;
+    statusBar()->addWidget(label1);
+    statusBar()->addWidget(label2);
+
+    connect(spreadsheet,SIGNAL(currentCellChanged(int,int,int,int)),
+            this,SLOT(slotUpdateStatusBar()));
+
+
+}
+
 bool MainWindow::loadFile(const QString &strfilename)
 {
     if( !spreadsheet->readFile(strfilename) )
@@ -236,9 +253,11 @@ void MainWindow::slotOpenFile()
 
     if(!loadFile(filename))
     {
-        qDebug()<< "loadFile failed" << endl;
+        statusBar()->showMessage("Open file failed",1000);
         return;
     }
+
+    statusBar()->showMessage("loadFile sucess",1000);
 
 }
 
@@ -250,11 +269,16 @@ void MainWindow::slotSaveFile()
     }else
         slotSaveAsFile();
 
+
+
 }
 
 void MainWindow::Savefile(const QString &filename)
 {
    spreadsheet->writeFile(filename);
+   statusBar()->showMessage("File Saved",1000);
+   setModify(false);
+
    QString title = windowTitle();
    if(!title.contains('*'))
        return;
@@ -263,7 +287,6 @@ void MainWindow::Savefile(const QString &filename)
        QString newtitle = title.remove('*');
        setWindowTitle(newtitle);
    }
-   setModify(false);
 
 }
 
@@ -432,6 +455,7 @@ void MainWindow::slotSpreadmodify()
     if(strCurrentFileName.isEmpty())
         return;
     setModify(true);
+    slotUpdateStatusBar();
     QString title = windowTitle();
     if(title.contains('*'))
         return;
@@ -441,6 +465,14 @@ void MainWindow::slotSpreadmodify()
         setWindowTitle(newtitle);
     }
 
+
+
+}
+
+void MainWindow::slotUpdateStatusBar()
+{
+    label1->setText(spreadsheet->currentLocation());
+    label2->setText(spreadsheet->currentFormula() );
 }
 
 void MainWindow::updateRecentActions()
