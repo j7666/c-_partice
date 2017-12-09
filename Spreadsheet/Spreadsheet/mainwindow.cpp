@@ -18,13 +18,13 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(spreadsheet);
     dialog = NULL;
     strCurrentFileName = "";
-    bIsModify = false;
     Recentfiles.clear();
 
     initActions();
     initMenu();
     initTool();
-
+    connect(spreadsheet,SIGNAL(modified()),this,SLOT(slotSpreadmodify()) );
+    bIsModify = false;
     resize(800,600);
 }
 
@@ -184,6 +184,10 @@ bool MainWindow::loadFile(const QString &strfilename)
     {
         return false;
     }
+    strCurrentFileName = strfilename;
+    setModify(false);
+    setWindowTitle(QFileInfo(strCurrentFileName).fileName());
+    updateRecentFiles(strCurrentFileName);
     return true;
 
 }
@@ -219,60 +223,92 @@ void MainWindow::slotNewFile()
 
 void MainWindow::slotOpenFile()
 {
-    setModify(true);
-    if(isModify())
+    if(!okToContinue())
     {
-        bool ret = QMessageBox::question(this,tr("warning"),"File is modify,do you want to save?",QString("Save"),QString("Don't Save"));
-        if(!ret)
-        {
-            slotSaveFile();
-        }
+        return;
+    }
 
-        QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "", QString("spreadsheet(*.sp *.sps)"));
-        if(filename.isEmpty())
-        {
-            return;
-        }
+    QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "", QString("spreadsheet(*.sp *.sps)"));
+    if(filename.isEmpty())
+    {
+        return;
+    }
 
-        if(!loadFile(filename))
-        {
-            qDebug()<< "loadFile failed" << endl;
-            return;
-        }
-
-        setWindowTitle(QFileInfo(filename).fileName());
-        updateRecentFiles(filename);
-
+    if(!loadFile(filename))
+    {
+        qDebug()<< "loadFile failed" << endl;
+        return;
     }
 
 }
 
 void MainWindow::slotSaveFile()
 {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "D:", QString("spreadsheet(*.sp,*.sps)") );
-    //按照格式写文件。
-    if(!filename.isEmpty())
+    if(!strCurrentFileName.isEmpty())
     {
-        Savefile(filename);
-    }
+        Savefile(strCurrentFileName);
+    }else
+        slotSaveAsFile();
+
 }
 
 void MainWindow::Savefile(const QString &filename)
 {
    spreadsheet->writeFile(filename);
+   QString title = windowTitle();
+   if(!title.contains('*'))
+       return;
+   else
+   {
+       QString newtitle = title.remove('*');
+       setWindowTitle(newtitle);
+   }
+   setModify(false);
+
+}
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+    bool ret = false;
+    if(isModify())
+    {
+        ret = QMessageBox::question(this,tr("warning"),"File is modify,do you want to save?",QString("Save"),QString("Don't Save"));
+        if(!ret)
+            slotSaveFile();
+    }
+    close();
+
+}
+
+bool MainWindow::okToContinue()
+{
+    if(isModify())
+    {
+        bool ret = QMessageBox::question(this,tr("warning"),"File is modify,do you want to save?",QString("Save"),QString("Don't Save"));
+        if(!ret)
+        slotSaveFile();
+    }
+
+    return true;
+
 }
 
 void MainWindow::slotSaveAsFile()
 {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save AS"), "D:", QString("spreadsheet(*.sp,*.sps)") );
-    //按照格式写文件。
+        QString filename = QFileDialog::getSaveFileName(this, tr("Save As"), "D:", QString("spreadsheet(*.sp,*.sps)") );
+        if(!filename.isEmpty())
+            Savefile(filename);
+
 }
 
 void MainWindow::slotRecentFile()
 {
     QAction *action = qobject_cast<QAction *>(sender());
-    QMessageBox::warning(this,"", action->text());
-
+    QString filename = action->text();
+    if(okToContinue())
+    {
+        loadFile(filename);
+    }
 }
 
 void MainWindow::slotExit()
@@ -389,6 +425,22 @@ void MainWindow::slotAbout()
 void MainWindow::slotAboutQt()
 {
     QMessageBox::aboutQt(this,tr("about"));
+}
+
+void MainWindow::slotSpreadmodify()
+{
+    if(strCurrentFileName.isEmpty())
+        return;
+    setModify(true);
+    QString title = windowTitle();
+    if(title.contains('*'))
+        return;
+    else
+    {
+        QString newtitle = title + '*';
+        setWindowTitle(newtitle);
+    }
+
 }
 
 void MainWindow::updateRecentActions()

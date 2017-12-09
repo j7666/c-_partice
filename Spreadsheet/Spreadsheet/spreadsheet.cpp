@@ -99,7 +99,7 @@ void Spreadsheet::del()
     if(!items.isEmpty())
         foreach(QTableWidgetItem *item, items)
             delete item;
-    somethingChanged();
+    //somethingChanged();
 }
 
 QString Spreadsheet::currentLocation() const

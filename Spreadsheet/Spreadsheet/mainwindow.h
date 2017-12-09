@@ -27,7 +27,8 @@ public:
     void updateRecentActions();
     bool bAutoRecalc;
     void Savefile(const QString &filename);
-
+    void closeEvent(QCloseEvent *);
+    bool okToContinue();
 private:
     Spreadsheet *spreadsheet;
 
@@ -101,6 +102,8 @@ private slots:
 
     void slotAbout();
     void slotAboutQt();
+
+    void slotSpreadmodify();
 
 
 
