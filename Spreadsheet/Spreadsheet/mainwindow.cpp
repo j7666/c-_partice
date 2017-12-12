@@ -11,6 +11,7 @@
 #include <QDebug>
 
 
+
 class SpreadsheetCompare;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -184,11 +185,23 @@ void MainWindow::initTool()
 void MainWindow::initStatusbar()
 {
     label1 = new QLabel("W999");
-    label1->setAlignment(Qt::AlignCenter | Qt::AlignHCenter);
+    label1->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     label1->setMinimumSize(label1->sizeHint());
-    label2 = new QLabel;
+    label2 = new QLabel("TEST");
+
+    QLabel *label3 = new QLabel("TEST");
+
+    processBar = new QProgressBar;
+    processBar->setTextVisible(false);
+    processBar->setMaximum(0);
+    processBar->setMinimum(100);
+
+
     statusBar()->addWidget(label1);
-    statusBar()->addWidget(label2);
+    statusBar()->addWidget(label2,1);
+
+    statusBar()->addPermanentWidget(processBar);
+        statusBar()->addPermanentWidget(label3);
 
     connect(spreadsheet,SIGNAL(currentCellChanged(int,int,int,int)),
             this,SLOT(slotUpdateStatusBar()));

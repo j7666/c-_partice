@@ -8,6 +8,7 @@
 #include "spreadsheet.h"
 #include "finddialog.h"
 #include <QStatusBar>
+#include <QProgressBar>
 
 class MainWindow : public QMainWindow
 {
@@ -80,6 +81,7 @@ private:
 
     QLabel *label1;
     QLabel *label2;
+    QProgressBar *processBar;
 
 
     FindDialog *dialog;
