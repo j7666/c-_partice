@@ -8,5 +8,6 @@
         <file>images/fileopen.png</file>
         <file>images/fileprint.png</file>
         <file>images/filesave.png</file>
+        <file>images/shuijiemian.png</file>
     </qresource>
 </RCC>

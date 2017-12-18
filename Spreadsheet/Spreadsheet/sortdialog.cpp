@@ -27,6 +27,9 @@ SortDialog::~SortDialog()
 void SortDialog::setColumnRange(QChar first,QChar last)
 {
     QChar ch = first;
+    ui->PrimaryColumncomboBox->clear();
+    ui->SecondaryColumncomboBox->clear();
+    ui->TertiaryColumncomboBox->clear();
         while(ch <= last)
     {
         ui->PrimaryColumncomboBox->addItem(QString(ch));

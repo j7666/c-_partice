@@ -9,7 +9,9 @@
 #include <QTextStream>
 #include <QFile>
 #include <QDebug>
-
+#include <QSettings>
+#include <QEventLoop>
+#include <QTimer>
 
 
 class SpreadsheetCompare;
@@ -20,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(spreadsheet);
     dialog = NULL;
     bIsModify = false;
-    setCurrentFile("");
+
     Recentfiles.clear();
 
     initActions();
@@ -28,13 +30,22 @@ MainWindow::MainWindow(QWidget *parent)
     initTool();
     initStatusbar();
     connect(spreadsheet,SIGNAL(modified()),this,SLOT(slotSpreadmodify()) );
-
+    readSetting();
+    setCurrentFile("");
     resize(800,600);
+    wait();
 }
 
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::wait()
+{
+    QEventLoop eventloop;
+    QTimer::singleShot(2000, &eventloop, SLOT(quit())); //wait 2s
+    eventloop.exec();
 }
 
 void MainWindow::initActions()
@@ -189,22 +200,23 @@ void MainWindow::initStatusbar()
     label1->setMinimumSize(label1->sizeHint());
     label2 = new QLabel("TEST");
 
-    QLabel *label3 = new QLabel("TEST");
 
     processBar = new QProgressBar;
-    processBar->setTextVisible(false);
-    processBar->setMaximum(0);
-    processBar->setMinimum(100);
-
+//    processBar->setTextVisible();
+processBar->setRange(0,998);
 
     statusBar()->addWidget(label1);
     statusBar()->addWidget(label2,1);
 
     statusBar()->addPermanentWidget(processBar);
-        statusBar()->addPermanentWidget(label3);
+
+
+    connect(spreadsheet,SIGNAL(changeNum(int )), processBar,SLOT(setValue(int)) );
 
     connect(spreadsheet,SIGNAL(currentCellChanged(int,int,int,int)),
             this,SLOT(slotUpdateStatusBar()));
+
+
 
 
 }
@@ -243,6 +255,15 @@ void MainWindow::setCurrentFile(const QString &file)
     updateRecentFiles(strCurrentFileName);
 }
 
+void MainWindow::readSetting()
+{
+    QSettings settings("Software Inc.", "Spreadsheet");
+    restoreGeometry(settings.value("geometry").toByteArray());
+    Recentfiles = settings.value("recentFiles").toStringList();
+    ActionShowGrid->setChecked(settings.value("showGrid").toBool());
+    ActionAutoRecalculate->setChecked(settings.value("autoRecalc").toBool());
+}
+
 void MainWindow::updateRecentFiles(const QString &filename)
 {
         //move down
@@ -250,6 +271,7 @@ void MainWindow::updateRecentFiles(const QString &filename)
         //del wuxiao
     if(filename.isEmpty())
     {
+        updateRecentActions();
         return;
     }
     Recentfiles.removeAll(filename);
@@ -262,6 +284,7 @@ void MainWindow::updateRecentFiles(const QString &filename)
         if(!(QFile::exists(strfilename)))
             Recentfiles.removeOne(strfilename);
     }
+
 
     updateRecentActions();
 
@@ -328,6 +351,14 @@ void MainWindow::closeEvent(QCloseEvent *)
         if(!ret)
             slotSaveFile();
     }
+
+    //save setting
+    QSettings settings("Software Inc.", "Spreadsheet");
+    settings.setValue("geometry", saveGeometry() );
+    settings.setValue("recentFiles", Recentfiles );
+    settings.setValue("showGrid", this->ActionShowGrid->isChecked() );
+    settings.setValue("autoRecalc", ActionAutoRecalculate->isChecked() );
+
     close();
 
 }
@@ -497,7 +528,9 @@ void MainWindow::slotShowGrid(bool checked)
 
 void MainWindow::slotAbout()
 {
-    QMessageBox::about(this,tr("about"),"jialw\n2017-11-22");
+    QMessageBox::about(this,tr("about"),"<h2>jialw\n2017-11-22</h2>"
+                       "<p>111111111111111"
+                       "<p>22222222222");
 }
 
 void MainWindow::slotAboutQt()
@@ -524,10 +557,12 @@ void MainWindow::updateRecentActions()
 {
     for(int i = 0; i < 5; i++)
     {
+         qDebug()<< Recentfiles.size();
         if(i < Recentfiles.size())
         {
         ActionRecentFile[i]->setText(Recentfiles[i]);
         ActionRecentFile[i]->setVisible(true);
+        qDebug()<<ActionRecentFile[i] ;
         }
 //        else
 //            ActionRecentFile[i]

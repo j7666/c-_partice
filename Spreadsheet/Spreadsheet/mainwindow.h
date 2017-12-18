@@ -18,6 +18,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void wait();
     void initActions();
     void initMenu();
     void initTool();
@@ -33,6 +34,7 @@ public:
     bool okToContinue();
     void updatewindowtitle();
     void setCurrentFile(const QString &file);
+    void readSetting();
 private:
     Spreadsheet *spreadsheet;
 

@@ -276,6 +276,8 @@ bool Spreadsheet::readFile(const QString &filename)
         in >> row >> col >> str;
 
         setFormula(row,col,str);
+
+        emit changeNum(row);
     }
 
     QApplication::restoreOverrideCursor();

@@ -37,6 +37,7 @@ public:
 
 signals:
     void modified();
+    void changeNum(int num);
 
 
 
