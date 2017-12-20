@@ -11,35 +11,6 @@ tcpreceive::tcpreceive()
        cout << "listen error. errno =" << errno << endl;
     }
     connect(m_tcpServer,SIGNAL(newConnection()),this,SLOT(newTcpSocket()) );
-}
-
-void tcpreceive::start()
-{
-    while(1)
-    {
-        if(m_tcpServer->hasPendingConnections())
-        {
-            cout << "connect...." << endl;
-            m_tcpSocket = m_tcpServer->nextPendingConnection();
-            cout << "socket id =" <<m_tcpSocket << endl;
-
-            int numRead = 0, numReadTotal = 0;
-            char buffer[50];
-
-            forever {
-                numRead  = m_tcpSocket->read(buffer, 50);
-
-                // do whatever with array
-
-                numReadTotal += numRead;
-                if (numRead == 0 && !m_tcpSocket->waitForReadyRead())
-                    cout << "wait read" << endl;
-            }
-        }
-        else
-            cout << "err message: " << m_tcpServer->errorString().toStdString().data() << endl;
-        continue;
-    }
 
 }
 
@@ -47,18 +18,28 @@ void tcpreceive::newTcpSocket()
 {
     cout << "connect...." << endl;
     m_tcpSocket = m_tcpServer->nextPendingConnection();
-    cout << "socket id =" <<m_tcpSocket << endl;
+    connect(m_tcpSocket,SIGNAL(readyRead()),this,SLOT(Read()) );
+    connect(m_tcpSocket,SIGNAL(disconnected()),this,SLOT(deleteLater()) );
+}
+
+void tcpreceive::Read()
+{
+    printf("read\n");
 
     int numRead = 0, numReadTotal = 0;
     char buffer[50];
-
+    memset(buffer, 0, sizeof(buffer ) );
     forever {
-        numRead  = m_tcpSocket->read(buffer, 50);
-        printf("buf = %x\n",buffer);
+        numRead  = m_tcpSocket->read(buffer, 5);
+        for(int i = 0; i < numRead; i++)
+        printf("i = %d,  buf = %x\n",i,buffer[i]);
         //cout << "read:" << buffer << endl;
+        memset(buffer, 0, sizeof(buffer ) );
         numReadTotal += numRead;
         if (numRead == 0 && !m_tcpSocket->waitForReadyRead())
+        {
             cout << "wait read" << endl;
+            break;
+        }
     }
-
 }

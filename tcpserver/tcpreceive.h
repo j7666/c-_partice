@@ -18,6 +18,7 @@ class tcpreceive : public QObject
         void start();
     public slots:
         void newTcpSocket();
+        void Read();
     };
 
 #endif // TCPRECEIVE_H
