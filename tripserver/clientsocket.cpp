@@ -40,4 +40,24 @@ printf("to=%s\n",to.toStdString().data());
 
 printf("date=%s, time=%s\n",date.toString().toStdString().data(),time.toString().toStdString().data() );
 
+
+senddata();
+}
+
+
+void clientsocket::senddata()
+{
+    QByteArray data;
+    QDataStream out( &data,QIODevice::WriteOnly);  //如何通过stream写数据到socket
+
+    out << quint16(00);
+    out << quint8('R');
+    out << QString("BH");
+    out << QString("SH");
+    out << QDate(2011,1,1);
+    out << QTime(1,1,1,1);
+
+    printf("write\n");
+    write(data);
+
 }
