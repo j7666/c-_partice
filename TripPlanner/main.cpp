@@ -1,6 +1,7 @@
 #include "widget.h"
 #include <QApplication>
 #include <QTextCodec>
+#include <QCoreApplication>
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(codec);
     QTextCodec::setCodecForTr(codec);
 
+    printf("tcp client\n");
     Widget w;
     w.show();
 
