@@ -4,6 +4,18 @@
 #include <QWidget>
 #include <QTcpSocket>
 
+struct messagestuct
+{
+       quint16 num;
+       QString s;
+       QString From;
+       QString To;
+       QString Date;
+       QString time;
+};
+
+
+
 namespace Ui {
     class Widget;
 }
@@ -17,15 +29,17 @@ public:
     ~Widget();
     void ConnectToServer();
     void SendRequest();
+    void init();
 
 private slots:
     void Search();
     void StopSearch();
     void Quit();
+    void readData();
 
 private:
     Ui::Widget *ui;
-    QTcpSocket *tcpsocket;
+    QTcpSocket tcpsocket;
 
 
 

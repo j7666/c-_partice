@@ -1,8 +1,9 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <QHostAddress>
+#include <QDateTime>
 
-#define HOSTIP "127.0.0.1"
+#define HOSTIP "222.111.112.200"
 #define TRIPPORT 7990
 
 Widget::Widget(QWidget *parent) :
@@ -11,9 +12,14 @@ Widget::Widget(QWidget *parent) :
 {
 
     ui->setupUi(this);
+    init();
+
+
+
     connect(ui->pushButtonSearch,SIGNAL(clicked(bool)),this,SLOT(Search()) );
     connect(ui->pushButtonStop,SIGNAL(clicked(bool)),this,SLOT(StopSearch()) );
     connect(ui->pushButtonQuit,SIGNAL(clicked(bool)),this,SLOT(Quit()) );
+    connect(&tcpsocket,SIGNAL(readyRead()),this,SLOT(readData()) );
 
 }
 
@@ -24,16 +30,67 @@ Widget::~Widget()
 
 void Widget::ConnectToServer()
 {
-    tcpsocket = new QTcpSocket;
     QHostAddress address(HOSTIP);
-    tcpsocket->connectToHost(address,TRIPPORT);
+    tcpsocket.connectToHost(address,TRIPPORT);
+    QString message = QString("Connect to Host:%1,Port:%2.Sending Request").arg(HOSTIP).arg(QString::number(TRIPPORT));
+    ui->labelMessage->setText(message);
 }
 
 void Widget::SendRequest()
 {
+    QByteArray data;
+    QDataStream out( &data,QIODevice::WriteOnly);  //如何通过stream写数据到socket
+//    messagestuct msg;
+//    msg.num = 88;
+//    msg.s = 's';
+//    msg.From = ui->comboBoxFrom->currentText();
+//    msg.To = ui->comboBoxTo->currentText();
+//    msg.Date = ui->dateEditDate->date().toString();
+//    msg.time = ui->timeEditTime->time().toString();  //需要把结构体转换为char*,要考虑字节顺序及字节对齐问题。
 
-    tcpsocket->write("sendrequest",sizeof("sendrequest"));
-    tcpsocket->close();
+//    tcpsocket.write((char *)(&msg),sizeof(msg));
+
+    out << quint16(88);
+    out << quint8('s');
+    out << ui->comboBoxFrom->currentText();
+    out << ui->comboBoxTo->currentText();
+    out << ui->dateEditDate->date();
+    out << ui->timeEditTime->time();
+
+    tcpsocket.write(data);
+
+    tcpsocket.close();
+
+}
+
+void Widget::init()
+{
+    QStringList FromList;
+    FromList << "上海" << "深圳";
+    ui->comboBoxFrom->addItems(FromList);
+
+    QStringList ToList;
+    ToList << "北京" << "太原";
+    ui->comboBoxTo->addItems(ToList);
+
+    ui->tableWidget->setSortingEnabled(true);
+    ui->tableWidget->setColumnCount(4);
+
+    QStringList headerList;
+    headerList << "Data" << "Departure" << "Arrival" << "Duration";
+    ui->tableWidget->setHorizontalHeaderLabels(headerList);
+
+    ui->tableWidget->insertRow(0);
+//    QTableWidgetItem *item = new QTableWidgetItem("A");
+//    ui->tableWidget->setItem(0,0,item);
+
+    QDateTime tm = QDateTime::currentDateTime();
+    ui->dateEditDate->setDate(tm.date());
+    ui->timeEditTime->setTime(tm.time());
+
+    ui->radioButtonArrival->setChecked(true);
+
+    ui->labelMessage->setText("等待查询");
 
 }
 
@@ -46,10 +103,27 @@ void Widget::Search()
 
 void Widget::StopSearch()
 {
-
+    tcpsocket.disconnectFromHost();
+    QString message("disconnectFromHost");
+    ui->labelMessage->setText(message);
 }
 
 void Widget::Quit()
 {
+    close();
+}
+
+void Widget::readData()
+{
+    char buff[50];
+    QString strData, strDeparture, strArrival, strDuration;
+
+    QDataStream in(&tcpsocket);
+    in >> strData;
+    in >> strDeparture;
+    in >> strArrival;
+    in >> strDuration;
+
+
 
 }
