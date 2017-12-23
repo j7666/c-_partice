@@ -9,22 +9,26 @@ namespace Ui {
 }
 
 class Widget : public QWidget
-    {
-        Q_OBJECT
+{
+    Q_OBJECT
 
-    public:
-        explicit Widget(QWidget *parent = 0);
-        ~Widget();
+public:
+    explicit Widget(QWidget *parent = 0);
+    ~Widget();
+    void ConnectToServer();
+    void SendRequest();
 
-    private slots:
-        void Search();
-        void StopSearch();
-        void Quit();
+private slots:
+    void Search();
+    void StopSearch();
+    void Quit();
 
-    private:
-        Ui::Widget *ui;
-        QTcpSocket tcpsocket;
+private:
+    Ui::Widget *ui;
+    QTcpSocket *tcpsocket;
 
-    };
+
+
+};
 
 #endif // WIDGET_H
