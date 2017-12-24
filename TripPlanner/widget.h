@@ -27,12 +27,13 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
-    void ConnectToServer();
-    void SendRequest();
+
     void init();
 
 private slots:
     void Search();
+    void ConnectToServer();
+    void SendRequest();
     void StopSearch();
     void Quit();
     void readData();

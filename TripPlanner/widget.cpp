@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include <QDebug>
 
-#define HOSTIP "222.111.112.200"
+#define HOSTIP "127.0.0.1"
 #define TRIPPORT 7990
 
 Widget::Widget(QWidget *parent) :
@@ -17,7 +17,10 @@ Widget::Widget(QWidget *parent) :
 
 
 
-    connect(ui->pushButtonSearch,SIGNAL(clicked(bool)),this,SLOT(Search()) );
+    connect(ui->pushButtonSearch,SIGNAL(clicked(bool)),this,SLOT(ConnectToServer()) );
+    connect(&tcpsocket,SIGNAL(connected()),this,SLOT(SendRequest()) );
+    //
+
     connect(ui->pushButtonStop,SIGNAL(clicked(bool)),this,SLOT(StopSearch()) );
     connect(ui->pushButtonQuit,SIGNAL(clicked(bool)),this,SLOT(Quit()) );
     connect(&tcpsocket,SIGNAL(readyRead()),this,SLOT(readData()) );
@@ -61,12 +64,13 @@ void Widget::SendRequest()
 
     tcpsocket.write(data);
 
-    tcpsocket.close();
+    //tcpsocket.close();
 
 }
 
 void Widget::init()
 {
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers );
     QStringList FromList;
     FromList << "上海" << "深圳";
     ui->comboBoxFrom->addItems(FromList);
@@ -132,6 +136,7 @@ void Widget::readData()
     in >> date;
     in >> time;
   //headerList << "num" << "S" << "from" << "to" << "Date" << "time";
+    qDebug() << num << s << from << to << date << time << endl;
     QTableWidgetItem *item = new QTableWidgetItem(QString(num));
     ui->tableWidget->setItem(0,0, item);
 
