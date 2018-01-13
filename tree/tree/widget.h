@@ -24,6 +24,35 @@
 #include <QMap>
 #include <QStringListModel>
 
+class MailTableWidget : public QTableWidget
+    {
+        Q_OBJECT
+    public:
+        MailTableWidget(QWidget *parent );
+        MailTableWidget(int rows, int columns, QWidget *parent = 0);
+        ~MailTableWidget();
+
+        void dragEnterEvent(QDragEnterEvent *event);
+        void dragMoveEvent(QDragMoveEvent *event);
+        void dropEvent(QDropEvent *event);
+    };
+
+class SymbolListWidget : public QListWidget
+    {
+        Q_OBJECT
+    public:
+
+      SymbolListWidget(QWidget *parent =0);
+      ~SymbolListWidget();
+      void mousePressEvent(QMouseEvent *event);
+      void mouseMoveEvent(QMouseEvent *e);
+      void dragMoveEvent(QDragMoveEvent *e);
+
+      void performDrag();
+private:
+      QPoint startPos;
+    };
+
 class TeamLeaderDlg:public QDialog
     {
         Q_OBJECT

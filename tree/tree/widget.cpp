@@ -3,7 +3,8 @@
 #include <QMapIterator>
 #include <QToolBox>
 #include <QStringListModel>
-
+#include <QApplication>
+#include <QTableWidgetItem>
 
 Widget::Widget(QWidget *parent) :
     QMainWindow(parent)
@@ -11,7 +12,16 @@ Widget::Widget(QWidget *parent) :
 
     /******************QSplite用法********************/
     //右侧邮件列表和邮件内容显示区域
-    mailListTable = new QTableWidget(2,3);
+    mailListTable = new MailTableWidget(2,3);
+//    for(int i =0;i <2;i++)
+//    {
+//        for(int j =0; j<3; j++)
+//        {
+//            QTableWidgetItem *item = new QTableWidgetItem;
+//            mailListTable->setItem(i,j,item);
+//        }
+
+//    }
     mailListTable->verticalHeader()->setVisible(false);
 
 
@@ -59,7 +69,7 @@ Widget::Widget(QWidget *parent) :
     connect(btn1,SIGNAL(clicked(bool)),this,SLOT(TeamLeaderDialog()) );
     QPushButton *btn2 = new QPushButton("reverse");
 
-    mainListWidget = new QListWidget;
+    mainListWidget = new SymbolListWidget;
     createData();
     mailListTableConstrucer();
 //    mainListWidget->addItems(QStringList() << "1" << "2");
@@ -377,6 +387,8 @@ TeamLeaderDlg::TeamLeaderDlg(QWidget *parent):
 
     connect(insertBtn,SIGNAL(clicked(bool)),this,SLOT(insert()) );
     connect(deletBtn,SIGNAL(clicked(bool)),this,SLOT(del()) );
+    connect(okBtn,SIGNAL(clicked(bool)),this,SLOT(accept()) );
+    connect(okBtn,SIGNAL(clicked(bool)),this,SLOT(reject()) );
 
 }
 
@@ -387,15 +399,24 @@ TeamLeaderDlg::~TeamLeaderDlg()
 
 void TeamLeaderDlg::insert()
 {
-    int row = pview->currentIndex().row();
+    int row;
+    QModelIndex index;
+    if(pview->currentIndex().isValid())
+    {
+        row = pview->currentIndex().row();
+    }
+    else
+        row = 0;  //无当前index时，即第一行。
+
     pModel->insertRows(row,1);
-
-    QModelIndex index = pModel->index(row);
-//    pModel->setData(index,Qt::green,Qt::BackgroundColorRole);  //只对DisplayRole起作用
+    index = pModel->index(row);
+    //    pModel->setData(index,Qt::green,Qt::BackgroundColorRole);  //只对DisplayRole起作用
     pModel->setData(index,"unknown",Qt::DisplayRole);
-
     pview->setCurrentIndex(index);
     pview->edit(index);
+
+
+
 
 
 
@@ -406,4 +427,136 @@ void TeamLeaderDlg::insert()
 void TeamLeaderDlg::del()
 {
     pModel->removeRows(pview->currentIndex().row(),1);
+}
+
+SymbolListWidget::SymbolListWidget(QWidget *parent)
+    :QListWidget(parent)
+{
+//    setDragEnabled(true);
+}
+
+SymbolListWidget::~SymbolListWidget()
+{
+
+}
+
+void SymbolListWidget::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton )
+        startPos = event->pos();
+    QListWidget::mousePressEvent(event);
+
+}
+
+void SymbolListWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    if(e->buttons() & Qt::LeftButton )  //为什么要使用buttons函数。
+    {
+        int distance = (e->pos() -startPos ).manhattanLength();
+        if(distance >= QApplication::startDragDistance())
+            performDrag();
+
+    }
+
+    QListWidget::mouseMoveEvent(e);
+
+}
+
+void SymbolListWidget::dragMoveEvent(QDragMoveEvent *e)
+{
+    SymbolListWidget *source = qobject_cast<SymbolListWidget *>(e->source() );
+    if(source && source!=this)
+    {
+        QMessageBox::information(0,"1","1");
+        e->setDropAction(Qt::MoveAction);
+        e->accept();
+    }
+}
+
+void SymbolListWidget::performDrag()
+{
+//    QMessageBox::information(0,"Drag","Drag");
+    QListWidgetItem *item = this->currentItem();
+    if(item == NULL)
+        return;
+    QMimeData *mimedata = new QMimeData;
+    mimedata->setText(item->text());
+
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimedata);
+    drag->setPixmap(QString(":/resource/%1.png").arg(item->data(Qt::UserRole).toInt())  );
+
+    if(drag->exec(Qt::MoveAction) == Qt::MoveAction )
+        delete item;
+
+}
+
+MailTableWidget::MailTableWidget(QWidget *parent)
+    :QTableWidget(parent)
+{
+//    setAcceptDrops(true);
+}
+
+MailTableWidget::MailTableWidget(int rows, int columns, QWidget *parent)
+    :QTableWidget( rows,  columns, parent)
+{
+    setAcceptDrops(true);
+}
+
+MailTableWidget::~MailTableWidget()
+{
+
+}
+
+void MailTableWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+    qDebug() << __FUNCTION__ << endl;
+//    SymbolListWidget *source = qobject_cast<SymbolListWidget *>(event->source() );
+//    if(source && source!=this)
+//    {
+        qDebug() << "22222"<< endl ;
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+//    }
+
+}
+
+void MailTableWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+    qDebug() << __FUNCTION__ << endl;
+//    MailTableWidget *source = qobject_cast<MailTableWidget *>(event->source() );
+//    if(source && source!=this)
+//    {
+        qDebug() << "33333" << endl;
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+//    }
+}
+
+void MailTableWidget::dropEvent(QDropEvent *event)
+{
+    qDebug() << __FUNCTION__ << endl;
+//    MailTableWidget *source = qobject_cast<MailTableWidget *>(event->source() );
+//    if(source && source!=this)
+//    {
+        qDebug() << "44444" << endl;
+
+
+        //首先，在构造时，初始化所有的item，然后使用坐标位置找到此item，然后在更新其值
+//        QTableWidgetItem *item = currentItem(); //需要点击下此item才能更新其值。
+//        QTableWidgetItem *item = itemAt( event->pos() ); //根据鼠标位置更新其值。
+//        if(item == NULL)
+//             return;
+        //在构造时，未初始化所有的item。
+        QTableWidgetItem *item = new QTableWidgetItem;
+        item->setText(event->mimeData()->text() );
+
+        QModelIndex index = indexAt(event->pos());
+        setItem(index.row(),index.column(),item );
+
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+
+//    }
+
 }
