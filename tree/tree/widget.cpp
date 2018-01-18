@@ -65,9 +65,12 @@ Widget::Widget(QWidget *parent) :
     QToolBox *leftToolBox = new QToolBox(this);
 
 
-    QPushButton *btn1 = new QPushButton("TeamLeader-test");
+    QPushButton *btn1 = new QPushButton("TeamLeaderDialog");
+    btn1->setIcon(QIcon(QPixmap(":/resource/0.png")));
     connect(btn1,SIGNAL(clicked(bool)),this,SLOT(TeamLeaderDialog()) );
-    QPushButton *btn2 = new QPushButton("reverse");
+    QPushButton *btn2 = new QPushButton("SettingViewer");
+    connect(btn2,SIGNAL(clicked(bool)),this,SLOT(onSettingViwer()) );
+    btn2->setIcon(QIcon(QPixmap(":/resource/1.png")));
 
     mainListWidget = new SymbolListWidget;
     createData();
@@ -276,6 +279,12 @@ void Widget::TeamLeaderDialog()
     dlg.exec();
 }
 
+void Widget::onSettingViwer()
+{
+    SettingViewerDlg dlg;
+    dlg.exec();
+}
+
 
 
 Ticker::Ticker(QWidget *parent,Qt::WindowFlags flag): QLabel(parent)
@@ -432,7 +441,7 @@ void TeamLeaderDlg::del()
 SymbolListWidget::SymbolListWidget(QWidget *parent)
     :QListWidget(parent)
 {
-//    setDragEnabled(true);
+    setAcceptDrops(true);
 }
 
 SymbolListWidget::~SymbolListWidget()
@@ -464,17 +473,19 @@ void SymbolListWidget::mouseMoveEvent(QMouseEvent *e)
 
 void SymbolListWidget::dragMoveEvent(QDragMoveEvent *e)
 {
-    SymbolListWidget *source = qobject_cast<SymbolListWidget *>(e->source() );
-    if(source && source!=this)
-    {
+    qDebug() << __FUNCTION__ << endl;
+//    SymbolListWidget *source = qobject_cast<SymbolListWidget *>(e->source() );
+//    if(source && source!=this)
+//    {
         QMessageBox::information(0,"1","1");
         e->setDropAction(Qt::MoveAction);
         e->accept();
-    }
+//    }
 }
 
 void SymbolListWidget::performDrag()
 {
+
 //    QMessageBox::information(0,"Drag","Drag");
     QListWidgetItem *item = this->currentItem();
     if(item == NULL)
@@ -554,9 +565,65 @@ void MailTableWidget::dropEvent(QDropEvent *event)
         QModelIndex index = indexAt(event->pos());
         setItem(index.row(),index.column(),item );
 
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
+//        event->setDropAction(Qt::MoveAction);
+//        event->accept();
+        event->acceptProposedAction();
 
 //    }
 
+}
+
+SettingViewer::SettingViewer(QWidget *parent)
+{
+
+}
+
+SettingViewer::~SettingViewer()
+{
+
+}
+
+SettingViewerDlg::SettingViewerDlg(QWidget *parent)
+{
+
+    pTreeWidget = new SettingViewer(this);
+    pTreeWidget->setColumnCount(2);
+    pTreeWidget->setHeaderLabels(QStringList()<< "item" << "value");
+
+    pTreeWidget->header()->setResizeMode(0,QHeaderView::Stretch );
+    pTreeWidget->header()->setResizeMode(1,QHeaderView::Stretch );
+
+    addBtn = new QPushButton("Add");
+    connect(addBtn,SIGNAL(clicked(bool)),this,SLOT(onAddBtn()) );
+    deletBtn = new QPushButton("Delete");
+    connect(deletBtn,SIGNAL(clicked(bool)),this,SLOT(ondeletBtn()) );
+
+    QHBoxLayout *Btnlayout = new QHBoxLayout;
+    Btnlayout->addWidget(addBtn);
+    Btnlayout->addWidget(deletBtn);
+
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(pTreeWidget );
+    layout->addLayout(Btnlayout);
+
+    setLayout(layout);
+
+    setWindowTitle("SettingViewer");
+
+}
+
+SettingViewerDlg::~SettingViewerDlg()
+{
+
+}
+
+void SettingViewerDlg::onAddBtn()
+{
+    QMessageBox::information(0,"AddBtn","AddBtn");
+}
+
+void SettingViewerDlg::ondeletBtn()
+{
+    QMessageBox::information(0,"delBtn","delBtn");
 }

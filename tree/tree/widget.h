@@ -24,6 +24,37 @@
 #include <QMap>
 #include <QStringListModel>
 
+
+class SettingViewerDlg:public QDialog
+    {
+        Q_OBJECT
+    public:
+        SettingViewerDlg(QWidget *parent=0);
+        ~SettingViewerDlg();
+    public slots:
+
+
+    private:
+        QTreeWidget *pTreeWidget;
+        QPushButton *addBtn;
+        QPushButton *deletBtn;
+//        QPushButton *okBtn;
+//        QPushButton *cancelBtn;
+//        QStringListModel *pModel;
+
+    public slots:
+        void onAddBtn();
+        void ondeletBtn();
+    };
+
+class SettingViewer : public QTreeWidget
+    {
+        Q_OBJECT
+    public:
+        SettingViewer(QWidget *parent = 0);
+        ~SettingViewer();
+    };
+
 class MailTableWidget : public QTableWidget
     {
         Q_OBJECT
@@ -115,6 +146,7 @@ class Widget : public QMainWindow
          QSplitter *rightSpliter;
          QListWidget *mainListWidget;
 
+
     private:
           void createData();
           void mailListTableConstrucer();
@@ -122,6 +154,7 @@ class Widget : public QMainWindow
           QMap<int,QString> m_SymbolMap;
     public slots:
           void TeamLeaderDialog();
+          void onSettingViwer();
 
     };
 
