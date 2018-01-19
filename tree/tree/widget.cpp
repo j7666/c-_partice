@@ -593,6 +593,8 @@ SettingViewerDlg::SettingViewerDlg(QWidget *parent)
     pTreeWidget->header()->setResizeMode(0,QHeaderView::Stretch );
     pTreeWidget->header()->setResizeMode(1,QHeaderView::Stretch );
 
+    pTreeWidget->insertTopLevelItem(0,new QTreeWidgetItem(QStringList() << "1" << "2") );
+
     addBtn = new QPushButton("Add");
     connect(addBtn,SIGNAL(clicked(bool)),this,SLOT(onAddBtn()) );
     deletBtn = new QPushButton("Delete");
@@ -620,10 +622,32 @@ SettingViewerDlg::~SettingViewerDlg()
 
 void SettingViewerDlg::onAddBtn()
 {
-    QMessageBox::information(0,"AddBtn","AddBtn");
+    QTreeWidgetItem *pChild = new QTreeWidgetItem;
+    pChild->setText(0,"child");
+    pChild->setText(1,"valueChild");
+    QTreeWidgetItem *curItem = pTreeWidget->currentItem();
+    if(curItem == NULL)
+    {
+        curItem = pTreeWidget->invisibleRootItem();
+    }
+
+    curItem->addChild(pChild);
+
 }
+
 
 void SettingViewerDlg::ondeletBtn()
 {
-    QMessageBox::information(0,"delBtn","delBtn");
+    QTreeWidgetItem *curItem = pTreeWidget->currentItem();
+    if(curItem == NULL)
+    {
+        return;
+    }
+
+    QTreeWidgetItem *parentItem = curItem->parent();
+    if(parentItem == NULL)
+        parentItem = pTreeWidget->invisibleRootItem();
+
+    parentItem->removeChild(curItem);
+
 }
