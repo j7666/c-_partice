@@ -23,6 +23,28 @@
 #include <QPainter>
 #include <QMap>
 #include <QStringListModel>
+#include <QToolBox>
+#include <QDirModel>
+
+
+class DirectoryViewer :public QDialog
+{
+    Q_OBJECT
+public:
+    DirectoryViewer(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    ~DirectoryViewer();
+private:
+    QDirModel *model;
+    QTreeView *view;
+    QPushButton *CreatedirectoryBtn;
+    QPushButton *RemoveBtn;
+    QPushButton *QuitBtn;
+
+public slots:
+    void onCreate();
+    void onRemove();
+
+};
 
 
 class SettingViewerDlg:public QDialog
@@ -135,6 +157,8 @@ class Widget : public QMainWindow
          void dragEnterEvent(QDragEnterEvent *dragEnterEvent);
          void dropEvent(QDropEvent *event);
          bool readfile(const QString &filename);
+         void createLeftWidget();
+
 
     private:
         //QDockWidget *m_dockwidget;
@@ -145,6 +169,7 @@ class Widget : public QMainWindow
          QSplitter *mainsplit;
          QSplitter *rightSpliter;
          QListWidget *mainListWidget;
+         QToolBox *leftToolBox;
 
 
     private:
@@ -155,6 +180,7 @@ class Widget : public QMainWindow
     public slots:
           void TeamLeaderDialog();
           void onSettingViwer();
+          void onDirectoryViewer();
 
     };
 

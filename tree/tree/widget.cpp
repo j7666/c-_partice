@@ -5,6 +5,7 @@
 #include <QStringListModel>
 #include <QApplication>
 #include <QTableWidgetItem>
+#include <QInputDialog>
 
 Widget::Widget(QWidget *parent) :
     QMainWindow(parent)
@@ -61,18 +62,13 @@ Widget::Widget(QWidget *parent) :
 //                          Qt::ItemIsUserCheckable |
 //                          Qt::ItemIsEnabled |
 //                          Qt::ItemIsTristate);
-    //左侧树状窗体
-    QToolBox *leftToolBox = new QToolBox(this);
-
-
-    QPushButton *btn1 = new QPushButton("TeamLeaderDialog");
-    btn1->setIcon(QIcon(QPixmap(":/resource/0.png")));
-    connect(btn1,SIGNAL(clicked(bool)),this,SLOT(TeamLeaderDialog()) );
-    QPushButton *btn2 = new QPushButton("SettingViewer");
-    connect(btn2,SIGNAL(clicked(bool)),this,SLOT(onSettingViwer()) );
-    btn2->setIcon(QIcon(QPixmap(":/resource/1.png")));
 
     mainListWidget = new SymbolListWidget;
+
+    //左侧树状窗体
+    createLeftWidget();
+
+
     createData();
     mailListTableConstrucer();
 //    mainListWidget->addItems(QStringList() << "1" << "2");
@@ -90,10 +86,6 @@ Widget::Widget(QWidget *parent) :
 //    mailTreeWidget->installEventFilter(this);
     mainListWidget->installEventFilter(this);
 
-
-    leftToolBox->addItem(btn1,"TeamLeaderDialog");
-    leftToolBox->addItem(btn2,"reverse");
-    leftToolBox->addItem(mainListWidget,"ListWidget");
 
 
 
@@ -237,6 +229,28 @@ bool Widget::readfile(const QString &filename)
     return true;
 }
 
+void Widget::createLeftWidget()
+{
+    leftToolBox = new QToolBox(this);
+
+    QPushButton *btn1 = new QPushButton("TeamLeaderDialog");
+    btn1->setIcon(QIcon(QPixmap(":/resource/0.png")));
+    connect(btn1,SIGNAL(clicked(bool)),this,SLOT(TeamLeaderDialog()) );
+
+    QPushButton *btn2 = new QPushButton("SettingViewer");
+    connect(btn2,SIGNAL(clicked(bool)),this,SLOT(onSettingViwer()) );
+    btn2->setIcon(QIcon(QPixmap(":/resource/1.png")));
+
+    QPushButton *btn3 = new QPushButton("DirectoryViewer");
+    connect(btn3,SIGNAL(clicked(bool)),this,SLOT(onDirectoryViewer()) );
+    btn2->setIcon(QIcon(QPixmap(":/resource/2.png")));
+
+    leftToolBox->addItem(btn1,"TeamLeaderDialog");
+    leftToolBox->addItem(btn2,"reverse");
+    leftToolBox->addItem(btn3,"DirectoryViewer");
+    leftToolBox->addItem(mainListWidget,"ListWidget");
+}
+
 void Widget::createData()
 {
     m_SymbolMap.clear();
@@ -282,6 +296,12 @@ void Widget::TeamLeaderDialog()
 void Widget::onSettingViwer()
 {
     SettingViewerDlg dlg;
+    dlg.exec();
+}
+
+void Widget::onDirectoryViewer()
+{
+    DirectoryViewer dlg;
     dlg.exec();
 }
 
@@ -649,5 +669,73 @@ void SettingViewerDlg::ondeletBtn()
         parentItem = pTreeWidget->invisibleRootItem();
 
     parentItem->removeChild(curItem);
+
+}
+
+DirectoryViewer::DirectoryViewer(QWidget *parent , Qt::WindowFlags f)
+    :QDialog(parent,f)
+{
+    model = new QDirModel;
+    view = new QTreeView(this);
+    CreatedirectoryBtn = new QPushButton("Create Directory");
+    RemoveBtn = new QPushButton("Remove");
+    QuitBtn = new QPushButton("Quit");
+
+    QHBoxLayout  *hboxlayout= new QHBoxLayout;
+    hboxlayout->addWidget(CreatedirectoryBtn);
+    hboxlayout->addWidget(RemoveBtn);
+    hboxlayout->addStretch();
+    hboxlayout->addWidget(QuitBtn);
+
+    QVBoxLayout  *Vboxlayout= new QVBoxLayout;
+    Vboxlayout->addWidget(view);
+    Vboxlayout->addLayout(hboxlayout);
+
+    setLayout(Vboxlayout);
+
+    connect(CreatedirectoryBtn,SIGNAL(clicked(bool)),this,SLOT(onCreate()) );
+    connect(RemoveBtn,SIGNAL(clicked(bool)),this,SLOT(onRemove()) );
+    connect(QuitBtn,SIGNAL(clicked(bool)),this,SLOT(close()) );
+
+//    model->setReadOnly(false);
+    model->setSorting(QDir::Time /*| QDir::DirsFirst | QDir::Name | QDir::IgnoreCase*/);
+    view->setModel(model);
+    view->header()->setStretchLastSection(true);
+    view->header()->setSortIndicator(3,Qt::AscendingOrder);
+    view->header()->setSortIndicatorShown(true);
+    view->header()->setClickable(true);
+
+    QModelIndex index = model->index(QDir::currentPath());
+    view->expand(index);
+    view->scrollTo(index);
+    view->resizeColumnToContents(0);
+
+}
+
+DirectoryViewer::~DirectoryViewer()
+{
+
+}
+
+void DirectoryViewer::onCreate()
+{
+    QModelIndex index = view->currentIndex();
+    if(!index.isValid() )
+        return;
+    QString dirname = QInputDialog::getText(this,
+                                            "Creat Directory",
+                                            "Directory Name");
+    qDebug() << "dirnmae = " << dirname;
+
+    if(dirname.isEmpty())
+        return;
+
+    if(!(model->mkdir(index,dirname).isValid()))
+        QMessageBox::information(0,"warning",QString::number(errno) );
+
+}
+
+void DirectoryViewer::onRemove()
+{
 
 }
