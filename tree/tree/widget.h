@@ -25,7 +25,51 @@
 #include <QStringListModel>
 #include <QToolBox>
 #include <QDirModel>
+#include <QSortFilterProxyModel>
+#include <QComboBox>
 
+class CurrencyDlg : public QDialog
+{
+    Q_OBJECT
+public:
+    CurrencyDlg(QWidget *parent = 0);
+    ~CurrencyDlg();
+};
+
+class CurrencyModel : public QAbstractItemModel
+{
+    Q_OBJECT
+public:
+    CurrencyModel(QWidget *parent = 0);
+    ~CurrencyModel();
+    void setCurrencyData();
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+};
+
+
+class ColorNameDialog : public QDialog
+{
+    Q_OBJECT
+public:
+    ColorNameDialog(QWidget *parent = 0);
+    ~ColorNameDialog();
+    enum weekday{monday = 0,tue,wed,thu,fri,sat,sun };
+
+public slots:
+    void reapplyFilter();
+    void test();
+
+private:
+    QStringListModel *sourceModel;
+    QListView *pListView;
+    QSortFilterProxyModel *pSortFilterModel;
+
+    QLineEdit *pFilterEdit;
+    QLabel *pFilterLabel;
+    QComboBox *pSyntaxCombox;
+    QLabel *psyntaxLabel;
+
+};
 
 class DirectoryViewer :public QDialog
 {
@@ -181,6 +225,8 @@ class Widget : public QMainWindow
           void TeamLeaderDialog();
           void onSettingViwer();
           void onDirectoryViewer();
+          void onColorNameDlg();
+          void onCurrencles();
 
     };
 

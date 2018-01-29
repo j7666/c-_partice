@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QTableWidgetItem>
 #include <QInputDialog>
+#include <direct.h>
 
 Widget::Widget(QWidget *parent) :
     QMainWindow(parent)
@@ -243,11 +244,21 @@ void Widget::createLeftWidget()
 
     QPushButton *btn3 = new QPushButton("DirectoryViewer");
     connect(btn3,SIGNAL(clicked(bool)),this,SLOT(onDirectoryViewer()) );
-    btn2->setIcon(QIcon(QPixmap(":/resource/2.png")));
+    btn3->setIcon(QIcon(QPixmap(":/resource/2.png")));
+
+    QPushButton *btn4 = new QPushButton("ColorNameDlg");
+    connect(btn4,SIGNAL(clicked(bool)),this,SLOT(onColorNameDlg()) );
+    btn4->setIcon(QIcon(QPixmap(":/resource/3.png")));
+
+    QPushButton *btn5 = new QPushButton("Currencles");
+    connect(btn5,SIGNAL(clicked(bool)),this,SLOT(onCurrencles()) );
+    btn4->setIcon(QIcon(QPixmap(":/resource/4.png")));
 
     leftToolBox->addItem(btn1,"TeamLeaderDialog");
     leftToolBox->addItem(btn2,"reverse");
     leftToolBox->addItem(btn3,"DirectoryViewer");
+    leftToolBox->addItem(btn4,"ColorNameDlg");
+    leftToolBox->addItem(btn5,"Currencles");
     leftToolBox->addItem(mainListWidget,"ListWidget");
 }
 
@@ -302,6 +313,18 @@ void Widget::onSettingViwer()
 void Widget::onDirectoryViewer()
 {
     DirectoryViewer dlg;
+    dlg.exec();
+}
+
+void Widget::onColorNameDlg()
+{
+    ColorNameDialog dlg;
+    dlg.exec();
+}
+
+void Widget::onCurrencles()
+{
+    CurrencyDlg dlg;
     dlg.exec();
 }
 
@@ -730,12 +753,106 @@ void DirectoryViewer::onCreate()
     if(dirname.isEmpty())
         return;
 
-    if(!(model->mkdir(index,dirname).isValid()))
-        QMessageBox::information(0,"warning",QString::number(errno) );
+//    if(!(model->mkdir(index,dirname).isValid()))
+//        QMessageBox::information(0,"warning",QString::number(errno) );
+
+
+   if( mkdir("E:\2") )
+        QMessageBox::information(0,"warning",QString::number(errno));
+
+
 
 }
 
 void DirectoryViewer::onRemove()
+{
+    QModelIndex index = view->currentIndex();
+    if( !index.isValid() )
+        return;
+    model->rmdir(index);
+}
+
+ColorNameDialog::ColorNameDialog(QWidget *parent)
+    :QDialog(parent)
+{
+    sourceModel = new QStringListModel;
+    sourceModel->setStringList(QColor::colorNames() );
+    //setModal();
+    pSortFilterModel = new QSortFilterProxyModel;
+    pSortFilterModel->setSourceModel(sourceModel);
+    pSortFilterModel->setFilterKeyColumn(0);
+
+    pListView = new QListView(this);
+    pListView->setModel(pSortFilterModel );
+
+    pFilterEdit = new QLineEdit;
+    pFilterLabel = new QLabel(tr("Filter"));
+    pSyntaxCombox = new QComboBox;
+    pSyntaxCombox->addItem(tr("Regular expression"),QRegExp::RegExp);
+    pSyntaxCombox->addItem(tr("Wildcard"),QRegExp::Wildcard);
+    pSyntaxCombox->addItem(tr("FixedString"),QRegExp::FixedString);
+    psyntaxLabel = new QLabel(tr("Pattem syntax"));
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(pListView,0,0,1,0);
+    layout->addWidget(pFilterLabel,1,0 );
+    layout->addWidget(pFilterEdit,1,1 );
+    layout->addWidget(psyntaxLabel,2,0 );
+    layout->addWidget(pSyntaxCombox,2,1 );
+
+
+    setLayout(layout);
+
+    connect(pFilterEdit,SIGNAL(textChanged(QString)),this,SLOT(reapplyFilter()) );
+    connect(pSyntaxCombox,SIGNAL(editTextChanged(QString)),this,SLOT(reapplyFilter()) );
+
+
+}
+
+ColorNameDialog::~ColorNameDialog()
+{
+
+}
+
+void ColorNameDialog::reapplyFilter()
+{
+    QRegExp::PatternSyntax syntax =
+            QRegExp::PatternSyntax(pSyntaxCombox->itemData(
+                                       pSyntaxCombox->currentIndex() ).toInt() );
+    QRegExp regExp(pFilterEdit->text(),Qt::CaseSensitive, syntax);
+    this->pSortFilterModel->setFilterRegExp(regExp);
+
+}
+
+void ColorNameDialog::test()
+{
+    enum weekday week = weekday(pSyntaxCombox->currentIndex() );
+    QMessageBox::information(0,"test",QString::number(week));
+}
+
+CurrencyModel::CurrencyModel(QWidget *parent)
+    :QAbstractItemModel(parent)
+{
+
+}
+
+CurrencyModel::~CurrencyModel()
+{
+
+}
+
+void CurrencyModel::setCurrencyData()
+{
+
+}
+
+CurrencyDlg::CurrencyDlg(QWidget *parent)
+    :QDialog(parent)
+{
+
+}
+
+CurrencyDlg::~CurrencyDlg()
 {
 
 }
