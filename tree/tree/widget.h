@@ -28,22 +28,35 @@
 #include <QSortFilterProxyModel>
 #include <QComboBox>
 
+
+class CurrencyModel : public QAbstractTableModel
+{
+    Q_OBJECT
+public:
+    CurrencyModel(QWidget *parent = 0);
+    ~CurrencyModel();
+    void setCurrencyData(const QMap<QString, double> &map);
+
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+private:
+    QString currencyAt(int offset) const;
+    QMap<QString, double> CurrencyMap;
+};
+
 class CurrencyDlg : public QDialog
 {
     Q_OBJECT
 public:
     CurrencyDlg(QWidget *parent = 0);
     ~CurrencyDlg();
-};
 
-class CurrencyModel : public QAbstractItemModel
-{
-    Q_OBJECT
-public:
-    CurrencyModel(QWidget *parent = 0);
-    ~CurrencyModel();
-    void setCurrencyData();
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    QTableView *pView;
+    QAbstractTableModel *pModel;
+
+
 };
 
 

@@ -325,6 +325,7 @@ void Widget::onColorNameDlg()
 void Widget::onCurrencles()
 {
     CurrencyDlg dlg;
+    dlg.resize(400,300);
     dlg.exec();
 }
 
@@ -831,7 +832,7 @@ void ColorNameDialog::test()
 }
 
 CurrencyModel::CurrencyModel(QWidget *parent)
-    :QAbstractItemModel(parent)
+    :QAbstractTableModel(parent)
 {
 
 }
@@ -841,15 +842,83 @@ CurrencyModel::~CurrencyModel()
 
 }
 
-void CurrencyModel::setCurrencyData()
+void CurrencyModel::setCurrencyData(const QMap<QString,double> &map)
+{
+    CurrencyMap = map;
+    reset();
+}
+
+int CurrencyModel::rowCount(const QModelIndex &parent) const
 {
 
+    return CurrencyMap.count();
 }
+
+int CurrencyModel::columnCount(const QModelIndex &parent) const
+{
+    return CurrencyMap.count();
+}
+
+QVariant CurrencyModel::data(const QModelIndex &index, int role) const
+{
+    if(!index.isValid() )
+        return QVariant();
+
+    if(role == Qt::TextAlignmentRole )
+    {
+        return (int)(Qt::AlignVCenter || Qt::AlignRight);
+    }
+    else if(role == Qt::DisplayRole)
+    {
+        QString rowCurrency = currencyAt(index.row());
+        QString columnCurrency = currencyAt(index.column());
+        if(CurrencyMap.value(rowCurrency) == 0.0)
+            return "###";
+
+        double amount = CurrencyMap.value(columnCurrency)/CurrencyMap.value(rowCurrency);
+        return QString("%1").arg(amount);
+
+    }
+
+    return QVariant();
+}
+
+QVariant CurrencyModel::headerData(int section, Qt::Orientation /*orientation*/, int role) const
+{
+    if(role != Qt::DisplayRole )
+        return QVariant();
+
+    return currencyAt(section);
+}
+
+QString CurrencyModel::currencyAt(int offset) const
+{
+    return (CurrencyMap.begin()+offset).key();
+}
+
 
 CurrencyDlg::CurrencyDlg(QWidget *parent)
     :QDialog(parent)
 {
 
+     pModel = new CurrencyModel(this);
+
+     QMap<QString,double> map;
+     map.insert("AA",1.1);
+     map.insert("BB",2.2);
+     map.insert("CC",3.3);
+     map.insert("DD",4.4);
+     map.insert("EE",5.5);
+
+//     pModel->setCurrencyData(map);
+     qobject_cast<CurrencyModel *>(pModel)->setCurrencyData(map);
+
+     pView = new QTableView(this);
+     pView->setModel(pModel);
+
+     QGridLayout *layout = new QGridLayout;
+     layout->addWidget(pView);
+     this->setLayout(layout);
 }
 
 CurrencyDlg::~CurrencyDlg()
